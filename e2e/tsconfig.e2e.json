@@ -1,3 +1,14 @@
+/*
+
+This is the TypeScript config for end to end testing
+
+Documentation:
+
+tsconfig.json - https://www.typescriptlang.org/docs/handbook/tsconfig-json.html
+
+compilerOptions - //https://www.typescriptlang.org/docs/handbook/compiler-options.html
+
+*/
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
