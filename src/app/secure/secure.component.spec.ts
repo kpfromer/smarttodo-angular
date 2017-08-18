@@ -1,6 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SecureComponent} from './secure.component';
+import {RouterTestingModule} from '@angular/router/testing';
 
 describe('SecureComponent', () => {
   let component: SecureComponent;
@@ -8,6 +9,7 @@ describe('SecureComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       declarations: [SecureComponent]
     })
       .compileComponents();
@@ -21,5 +23,10 @@ describe('SecureComponent', () => {
 
   it('should be created', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should include one router-outlet element', () => {
+    const element = fixture.nativeElement;
+    expect(element.querySelectorAll('router-outlet').length).toBe(1);
   });
 });

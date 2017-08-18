@@ -1,6 +1,7 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TaskComponent} from './task.component';
+import {Task} from '../shared/task';
 
 describe('TaskComponent', () => {
   let component: TaskComponent;
@@ -16,10 +17,40 @@ describe('TaskComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TaskComponent);
     component = fixture.componentInstance;
+    component.task = new Task('1', 'Hello!', true);
     fixture.detectChanges();
   });
 
   it('should be created', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('checkbox', () => {
+    it('should have an id', () => {
+      const checkboxElement = fixture.nativeElement.querySelector('input[type="checkbox"]');
+      expect(checkboxElement.getAttribute('id')).toBe(`task${component.task.id}`);
+    });
+
+    it('should be checked', () => {
+      const checkboxElement = fixture.nativeElement.querySelector('input[type="checkbox"]');
+      expect(checkboxElement.checked).toBe(true);
+    });
+  });
+
+  describe('description label', () => {
+    it('should be for the checkbox', () => {
+      const labelElement = fixture.nativeElement.querySelector('label');
+      expect(labelElement.getAttribute('for')).toBe(`task${component.task.id}`);
+    });
+
+    it('should display task description', () => {
+      const labelElement = fixture.nativeElement.querySelector('label');
+      expect(labelElement.textContent.includes('Hello!')).toBe(true);
+    });
+
+    it('should have text-decoration style of line-through', () => {
+      const labelElement = fixture.nativeElement.querySelector('label');
+      expect(labelElement.style.textDecorationLine).toBe('line-through');
+    });
   });
 });

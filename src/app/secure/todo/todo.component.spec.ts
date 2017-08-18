@@ -1,6 +1,14 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TodoComponent} from './todo.component';
+import {Directive} from '@angular/core';
+import {By} from '@angular/platform-browser';
+
+@Directive({
+  selector: 'app-task-list'
+})
+class MockTaskListDirective {
+}
 
 describe('TodoComponent', () => {
   let component: TodoComponent;
@@ -8,7 +16,7 @@ describe('TodoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TodoComponent]
+      declarations: [TodoComponent, MockTaskListDirective]
     })
       .compileComponents();
   }));
@@ -21,5 +29,12 @@ describe('TodoComponent', () => {
 
   it('should be created', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should include one app-task-list element', () => {
+
+    const elements = fixture.debugElement.queryAll(By.directive(MockTaskListDirective));
+
+    expect(elements.length).toBe(1);
   });
 });

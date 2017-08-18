@@ -12,9 +12,9 @@ import {TaskService} from './shared/task.service';
     TodoRoutingModule
   ],
   declarations: [
-    TodoComponent,
     TaskComponent,
-    TaskListComponent
+    TaskListComponent,
+    TodoComponent
   ],
   providers: [
     TaskService
