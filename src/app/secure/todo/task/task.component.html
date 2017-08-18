@@ -1,3 +1,10 @@
-<p>
-  task works!
-</p>
+<li class="collection-item">
+  <input type="checkbox" [id]="'task'+task.id" [checked]="task.complete">
+  <label [for]="'task'+task.id" [ngStyle]="{'text-decoration': task.complete ? 'line-through' : 'home'}">
+    {{task.description}}
+    <!--<a href="#" class="secondary-content">-->
+    <!--<span class="ultra-small">Now</span>-->
+    <!--</a>-->
+  </label>
+  <!--<span class="task-cat teal">Work</span>-->
+</li>

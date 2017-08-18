@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {CanActivate, CanActivateChild, Router} from '@angular/router';
+import {CanActivate, Router} from '@angular/router';
 
 @Injectable()
-export class AuthGuard implements CanActivate, CanActivateChild {
+export class AuthGuard implements CanActivate {
 
   constructor(/* todo: private authService: AuthService,*/ private router: Router) {
   }
@@ -10,10 +10,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   canActivate() {
     return false;
     // todo: add authentication (return true if auth else return false)
-  }
-
-  canActivateChild() {
-    return this.canActivate();
   }
 
 }
