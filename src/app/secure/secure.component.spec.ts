@@ -2,6 +2,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {SecureComponent} from './secure.component';
 import {RouterTestingModule} from '@angular/router/testing';
+import {By} from '@angular/platform-browser';
 
 describe('SecureComponent', () => {
   let component: SecureComponent;
@@ -26,7 +27,7 @@ describe('SecureComponent', () => {
   });
 
   it('should include one router-outlet element', () => {
-    const element = fixture.nativeElement;
-    expect(element.querySelectorAll('router-outlet').length).toBe(1);
+    const element = fixture.debugElement;
+    expect(element.queryAll(By.css('router-outlet')).length).toBe(1);
   });
 });
