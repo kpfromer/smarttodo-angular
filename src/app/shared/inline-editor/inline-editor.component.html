@@ -1,0 +1,9 @@
+<div>
+  <div *ngIf="editing">
+    <input #inlineEditControl (keyup.enter)="doneEditing()" (keyup.esc)="cancelEditing()"
+           [(ngModel)]="value" [type]="type" focus="true" class="inline-input" [required]="required">
+  </div>
+  <div *ngIf="!editing">
+    <div title="Click to Edit" (click)="startEditing()" (focus)="startEditing()" tabindex="0" class="inline-text">{{value}}</div>
+  </div>
+</div>
