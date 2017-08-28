@@ -32,7 +32,7 @@ describe('NotLoggedIn', () => {
   describe('canActivateChild', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
-        providers: [NotLoggedIn]
+        providers: [NotLoggedIn, {provide: AuthService, useValue: {}}]
       });
     });
     it('should call canActivate', inject([NotLoggedIn],
