@@ -35,7 +35,6 @@ describe('FlashMessageComponent', () => {
 
   it('should display status color', () => {
     const paragraphElement = fixture.debugElement.query(By.css('#card-alert'));
-    console.log(paragraphElement.classes);
     expect(paragraphElement.classes.red).toBe(true);
   });
 });
