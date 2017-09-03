@@ -43,11 +43,6 @@ describe('AuthGuard', () => {
   });
 
   describe('canActivateChild', () => {
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        providers: [AuthGuard]
-      });
-    });
     it('should call canActivate', inject([AuthGuard],
       (service: AuthGuard) => {
         spyOn(service, 'canActivate');
