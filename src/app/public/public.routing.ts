@@ -10,7 +10,8 @@ import {PublicComponent} from './public.component';
         component: PublicComponent,
         children: [
           {path: '', redirectTo: 'home', pathMatch: 'full'},
-          {path: 'home', loadChildren: './home/home.module#HomeModule'}
+          {path: 'home', loadChildren: './home/home.module#HomeModule'},
+          {path: 'login', loadChildren: './login/login.module#LoginModule'}
         ]
       }
     ])
