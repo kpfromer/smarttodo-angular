@@ -103,10 +103,15 @@ describe('LoginComponent', () => {
       spyOn(loginService, 'login').and.returnValue(Promise.resolve(false));
       spyOn(component.loginForm, 'reset');
 
+      spyOn(component.loginForm.get('username'), 'setErrors');
+      spyOn(component.loginForm.get('password'), 'setErrors');
+
       component.login('test', 'testPassword');
       tick();
 
-      expect(component.loginForm.reset).toHaveBeenCalledWith({username: undefined, password: undefined});
+      expect(component.loginForm.reset).toHaveBeenCalled();
+      expect(component.loginForm.get('username').setErrors).toHaveBeenCalledWith({});
+      expect(component.loginForm.get('password').setErrors).toHaveBeenCalledWith({});
     }));
 
     it('should be triggered on submit button click with correct values', () => {

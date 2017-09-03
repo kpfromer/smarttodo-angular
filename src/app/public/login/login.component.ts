@@ -20,7 +20,9 @@ export class LoginComponent implements OnInit {
   login(username: string, password: string) {
     if (this.loginForm.invalid) return;
 
-    this.loginForm.reset({username: undefined, password: undefined});
+    this.loginForm.reset();
+    this.loginForm.get('username').setErrors({});
+    this.loginForm.get('password').setErrors({});
 
     this.loginService.login(username, password).then(isLoggedIn => {
       if (isLoggedIn) {
@@ -34,8 +36,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      username: [undefined, Validators.required],
-      password: [undefined, Validators.required]
+      username: [null, Validators.required],
+      password: [null, Validators.required]
     });
   }
 
