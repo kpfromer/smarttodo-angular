@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {AuthGuard} from '../shared/auth-guard.service';
 import {SecureComponent} from './secure.component';
+import {LogoutComponent} from './logout/logout.component';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import {SecureComponent} from './secure.component';
           {path: '', redirectTo: 'todo', pathMatch: 'full'},
           {path: 'todo', loadChildren: './todo/todo.module#TodoModule'}
         ]
-      }
+      },
+      {path: 'logout', component: LogoutComponent}
     ])
   ],
   exports: [
