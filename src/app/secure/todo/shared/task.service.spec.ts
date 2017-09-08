@@ -156,9 +156,13 @@ describe('TaskService', () => {
   });
 
   describe('createTask', () => {
-    let task: Task;
+    let task;
     beforeEach(() => {
-      task = new Task('i should not be included', 'math homework', false);
+      task = {
+        id: 'i should not be included',
+        description: 'math homework',
+        complete: false
+      };
     });
     it('should use https', () => {
       mockBackend.connections.subscribe((connection: MockConnection) => {

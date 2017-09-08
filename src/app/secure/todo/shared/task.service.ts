@@ -19,13 +19,10 @@ export class TaskService {
     return this.http.get(`https://${url}/task/${id}`);
   }
 
-  createTask(task: Task) {
-    const newTask = {
-      description: task.description,
-      complete: task.complete
-    };
-
-    return this.http.post(`https://${url}/tasks`, JSON.stringify(newTask));
+  createTask(task: {description: string, complete: boolean}) {
+    return this.http.post(`https://${url}/tasks`, JSON.stringify({
+      description: task.description, complete: task.complete
+    }));
   }
 
   updateTask(task: Task) {
