@@ -8,6 +8,25 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
   });
   // configure fake backend
   backend.connections.subscribe((connection: MockConnection) => {
+
+    const data: any[] = JSON.parse(localStorage.getItem('tasks')) || [
+      {
+        id: 'one',
+        description: 'math hw',
+        complete: false
+      },
+      {
+        id: 'two',
+        description: 'science workbook',
+        complete: false
+      },
+      {
+        id: 'three',
+        description: 'pg 1-100',
+        complete: true
+      }
+    ];
+
     const testUser = {username: 'test', password: 'test', firstName: 'Test', lastName: 'User'};
 
     // wrap in timeout to simulate server api call
@@ -43,37 +62,65 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
       }
 
       // fake users api end point
-      if (connection.request.url.endsWith('/tasks') && connection.request.method === RequestMethod.Get) {
+      if (connection.request.url.endsWith('/tasks')) {
         // check for fake auth token in header and return test users if valid, this security is implemented server side
         // in a real application
         if (connection.request.headers.get('Authorization') === `Bearer ${id_token}`) {
-          connection.mockRespond(new Response(
-            new ResponseOptions({status: 200, body: {
-              data: [
-                {
-                  id: 'one',
-                  description: 'math hw',
-                  complete: false
-                },
-                {
-                  id: 'two',
-                  description: 'science workbook',
-                  complete: false
-                },
-                {
-                  id: 'three',
-                  description: 'pg 1-100',
-                  complete: true
+          if (connection.request.method === RequestMethod.Get) {
+            connection.mockRespond(new Response(
+              new ResponseOptions({
+                status: 200, body: {
+                  data
                 }
-              ]
-            }})
-          ));
+              })
+            ));
+          } else if (connection.request.method === RequestMethod.Post) {
+            const body = JSON.parse(connection.request.getBody());
+            data.push({
+              id: 'database-id',
+              description: body.description,
+              complete: body.complete
+            });
+
+            localStorage.setItem('tasks', JSON.stringify(data));
+
+            connection.mockRespond(new Response(
+              new ResponseOptions({
+                status: 200, body: {
+                  data: {
+                    task: {
+                      id: 'database-id'
+                    }
+                  }
+                }
+              })
+            ));
+          } else {
+            connection.mockRespond(new Response(
+              new ResponseOptions({status: 400})
+            ));
+          }
         } else {
           // return 401 not authorised if token is null or invalid
           connection.mockRespond(new Response(
             new ResponseOptions({status: 401})
           ));
         }
+      }
+
+      if (connection.request.url.includes('/task/') && connection.request.method === RequestMethod.Put) {
+        const body = JSON.parse(connection.request.getBody());
+        data.push({
+          id: body.id,
+          description: body.description,
+          complete: body.complete
+        });
+
+        localStorage.setItem('tasks', JSON.stringify(data));
+
+        connection.mockRespond(new Response(
+          new ResponseOptions({status: 200})
+        ));
       }
 
     }, 500);
