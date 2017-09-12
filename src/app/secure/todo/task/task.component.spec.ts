@@ -53,5 +53,13 @@ describe('TaskComponent', () => {
       const labelElement = fixture.debugElement.query(By.css('label'));
       expect(labelElement.nativeElement.style.textDecorationLine).toBe('line-through');
     });
+
+    it('should remove text-decoration style of line-through', () => {
+      component.task.complete = false;
+      fixture.detectChanges();
+
+      const labelElement = fixture.debugElement.query(By.css('label'));
+      expect(labelElement.nativeElement.style.textDecorationLine).toBeFalsy();
+    });
   });
 });
