@@ -2,30 +2,42 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {FlashMessageComponent} from './flash-message.component';
 import {By} from '@angular/platform-browser';
+import {Component} from '@angular/core';
+
+
+@Component({
+  template: `
+  <app-flash-message [status]="status">{{message}}</app-flash-message>
+  `
+})
+class MockHostComponent {
+  status: string;
+  message: string;
+}
 
 describe('FlashMessageComponent', () => {
-  let component: FlashMessageComponent;
-  let fixture: ComponentFixture<FlashMessageComponent>;
+  let hostComponent: MockHostComponent;
+  let fixture: ComponentFixture<MockHostComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FlashMessageComponent ]
+      declarations: [ MockHostComponent, FlashMessageComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FlashMessageComponent);
-    component = fixture.componentInstance;
+    fixture = TestBed.createComponent(MockHostComponent);
+    hostComponent = fixture.componentInstance;
 
-    component.message = 'Error: Something bad!';
-    component.status = 'red';
+    hostComponent.message = 'Error: Something bad!';
+    hostComponent.status = 'red';
 
     fixture.detectChanges();
   });
 
   it('should be created', () => {
-    expect(component).toBeTruthy();
+    expect(hostComponent).toBeTruthy();
   });
 
   it('should display message', () => {

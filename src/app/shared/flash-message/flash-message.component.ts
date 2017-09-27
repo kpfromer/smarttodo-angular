@@ -8,8 +8,6 @@ import {Component, Input, OnInit} from '@angular/core';
 export class FlashMessageComponent implements OnInit {
 
   @Input()
-  message: string;
-  @Input()
   status: string;
 
   constructor() { }
