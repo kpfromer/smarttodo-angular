@@ -203,7 +203,11 @@ describe('TaskService', () => {
   describe('updateTask', () => {
     let task: Task;
     beforeEach(() => {
-      task = new Task('i-should-be-included', 'science worksheet', true);
+      task = new Task({
+        id: 'i-should-be-included',
+        description: 'science worksheet',
+        complete: true
+      });
     });
     it('should use https', () => {
       mockBackend.connections.subscribe((connection: MockConnection) => {

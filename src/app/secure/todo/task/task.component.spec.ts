@@ -18,7 +18,11 @@ describe('TaskComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TaskComponent);
     component = fixture.componentInstance;
-    component.task = new Task('1', 'Hello!', true);
+    component.task = new Task({
+      id: '1',
+      description: 'Hello!',
+      complete: true
+    });
     fixture.detectChanges();
   });
 

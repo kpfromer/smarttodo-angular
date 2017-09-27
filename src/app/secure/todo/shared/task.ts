@@ -3,9 +3,17 @@ export class Task {
   description: string;
   complete: boolean;
 
-  constructor(id: string, description: string, complete: boolean) {
-    this.id = id;
-    this.description = description;
-    this.complete = complete;
+  constructor(task: {id: string, description: string, complete: boolean}) {
+    this.id = task.id;
+    this.description = task.description;
+    this.complete = task.complete;
+  }
+
+  toJSON() {
+    return {
+      id: this.id,
+      description: this.description,
+      complete: this.complete
+    };
   }
 }
