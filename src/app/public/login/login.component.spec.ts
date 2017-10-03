@@ -125,6 +125,18 @@ describe('LoginComponent', () => {
 
       expect(component.login).toHaveBeenCalledWith('a cool username', 'a cool password');
     });
+
+    it('should not be called if validation errors', () => {
+      spyOn(component, 'login');
+
+      component.loginForm.setValue({username: '', password: ''});
+
+      const submit = fixture.debugElement.query(By.css('button[type=submit]'));
+      submit.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(component.login).not.toHaveBeenCalled();
+    });
   });
 
   describe('view', () => {

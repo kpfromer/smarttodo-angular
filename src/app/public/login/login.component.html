@@ -1,7 +1,7 @@
 <div id="login-page" class="row">
   <div class="col s12 z-depth-4 card-panel">
     <form id="login" class="login-form" [formGroup]="loginForm"
-          (submit)="login(loginForm.get('username').value, loginForm.get('password').value)" #lgForm="ngForm"
+          (submit)="loginForm.valid && login(loginForm.get('username').value, loginForm.get('password').value)" #lgForm="ngForm"
           novalidate>
       <div class="row">
         <div class="input-field col s12 center">
