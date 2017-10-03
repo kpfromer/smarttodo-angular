@@ -25,12 +25,7 @@ export class TaskListComponent implements OnInit {
         this.tasks = base.data as Task[];
       } else
         this.error = true;
-    }, (err: HttpErrorResponse) => {
-      if (err.error instanceof Error)
-        this.error = true;
-      else
-        this.error = true;
-    });
+    }, (err: HttpErrorResponse) => this.error = true);
   }
 
 
@@ -46,12 +41,7 @@ export class TaskListComponent implements OnInit {
     this.service.updateTask(newTask).subscribe(res => {
       if (res.status !== 200)
         this.error = true;
-    }, (err: HttpErrorResponse) => {
-      if (err.error instanceof Error)
-        this.error = true;
-      else
-        this.error = true;
-    });
+    }, (err: HttpErrorResponse) => this.error = true);
   }
 
   ngOnInit() {
