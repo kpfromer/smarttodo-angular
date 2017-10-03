@@ -5,16 +5,24 @@ import {TodoComponent} from './todo.component';
 import {TaskComponent} from './task/task.component';
 import {TaskListComponent} from './task-list/task-list.component';
 import {TaskService} from './shared/task.service';
+import {NewTaskComponent} from './new-task/new-task.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import {InlineEditorModule} from '../../shared/inline-editor/inline-editor.module';
+import {FlashMessageModule} from '../../shared/flash-message/flash-message.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    TodoRoutingModule
+    ReactiveFormsModule,
+    InlineEditorModule,
+    TodoRoutingModule,
+    FlashMessageModule
   ],
   declarations: [
     TaskComponent,
     TaskListComponent,
-    TodoComponent
+    TodoComponent,
+    NewTaskComponent
   ],
   providers: [
     TaskService
