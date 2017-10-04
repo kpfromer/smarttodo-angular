@@ -11,6 +11,10 @@ export class TaskService {
   constructor(private http: AuthHttp) {
   }
 
+  // todo: test for returns
+  // todo: test for edge cases
+  // todo: add edge case handling
+
   getTasks() {
     return this.http.get(`https://${url}/tasks`);
   }
@@ -25,8 +29,14 @@ export class TaskService {
     }));
   }
 
-  updateTask(task: Task) {
+  // todo: rename to putTask
+  updateTask(task: Task) { // todo: have separate parameter for id, ID is included in JSON.stringify(task) and adding id to backend!
     return this.http.put(`https://${url}/task/${task.id}`, JSON.stringify(task));
+  }
+
+  patchTaskById(id: string, properties) {
+    // todo: test
+    return this.http.patch(`https://${url}/task/${id}`, JSON.stringify(properties));
   }
 
   deleteTaskById(id: string) {

@@ -245,6 +245,40 @@ describe('TaskService', () => {
     });
   });
 
+  describe('patchTaskById', () => {
+    it('should use https', () => {
+      mockBackend.connections.subscribe((connection: MockConnection) => {
+        expect(connection.request.url.startsWith('https://')).toBe(true);
+      });
+
+      service.patchTaskById('anId', {newProp: true});
+    });
+
+    it('should use /task/{id}', () => {
+      mockBackend.connections.subscribe((connection: MockConnection) => {
+        expect(connection.request.url.endsWith('/task/anId')).toBe(true);
+      });
+
+      service.patchTaskById('anId', {newProp: true});
+    });
+
+    it('should PATCH', () => {
+      mockBackend.connections.subscribe((connection: MockConnection) => {
+        expect(connection.request.method).toBe(RequestMethod.Patch);
+      });
+
+      service.patchTaskById('anId', {newProp: true});
+    });
+
+    it('should pass object', () => {
+      mockBackend.connections.subscribe((connection: MockConnection) => {
+        expect(JSON.parse(connection.request.getBody())).toEqual({newProp: true});
+      });
+
+      service.patchTaskById('anId', {newProp: true});
+    });
+  });
+
   describe('deleteTaskById', () => {
     it('should use https', () => {
       mockBackend.connections.subscribe((connection: MockConnection) => {

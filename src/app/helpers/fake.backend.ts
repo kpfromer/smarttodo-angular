@@ -107,20 +107,44 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
           ));
         }
       }
+      if (connection.request.url.includes('/task/')) {
+        const id = connection.request.url.split('/task/')[1];
+        if (connection.request.method === RequestMethod.Put) {
+          const body = JSON.parse(connection.request.getBody());
+          data.push({
+            id,
+            description: body.description,
+            complete: body.complete
+          });
 
-      if (connection.request.url.includes('/task/') && connection.request.method === RequestMethod.Put) {
-        const body = JSON.parse(connection.request.getBody());
-        data.push({
-          id: body.id,
-          description: body.description,
-          complete: body.complete
-        });
+          localStorage.setItem('tasks', JSON.stringify(data));
 
-        localStorage.setItem('tasks', JSON.stringify(data));
+          connection.mockRespond(new Response(
+            new ResponseOptions({status: 200})
+          ));
+        } else if (connection.request.method === RequestMethod.Patch) {
+          const body = JSON.parse(connection.request.getBody());
+          const taskIndex = data.findIndex(task => task.id === id);
 
-        connection.mockRespond(new Response(
-          new ResponseOptions({status: 200})
-        ));
+          for (let prop of Object.keys(body)) {
+            data[taskIndex][prop] = body[prop];
+          }
+
+          localStorage.setItem('tasks', JSON.stringify(data));
+
+          connection.mockRespond(new Response(
+            new ResponseOptions({
+              status: 200, body: {
+                data: {
+                  task: {
+                    id: 'database-id'
+                  }
+                }
+              }
+            })
+          ));
+        }
+
       }
 
     }, 500);
