@@ -1,5 +1,5 @@
 <li class="collection-item">
-  <input type="checkbox" [id]="'task'+task.id" [checked]="task.complete">
+  <input type="checkbox" [id]="'task'+task.id" [checked]="task.complete" (change)="click(!task.complete)">
   <label [for]="'task'+task.id" [ngStyle]="{'text-decoration': task.complete ? 'line-through' : null}">
     {{task.description}}
     <!--<a href="#" class="secondary-content">-->

@@ -1,8 +1,17 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {TaskComponent} from './task.component';
 import {Task} from '../shared/task';
 import {By} from '@angular/platform-browser';
+import {TaskService} from '../shared/task.service';
+import {Observable} from 'rxjs/Observable';
+
+class MockTaskService {
+
+  patchTaskById(id: string, properties) {
+    return;
+  }
+}
 
 describe('TaskComponent', () => {
   let component: TaskComponent;
@@ -10,6 +19,7 @@ describe('TaskComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      providers: [{provide: TaskService, useClass: MockTaskService}],
       declarations: [TaskComponent]
     })
       .compileComponents();
@@ -31,6 +41,7 @@ describe('TaskComponent', () => {
   });
 
   describe('checkbox', () => {
+
     it('should have an id', () => {
       const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
       expect(checkboxElement.nativeElement.getAttribute('id')).toBe(`task${component.task.id}`);
@@ -40,6 +51,25 @@ describe('TaskComponent', () => {
       const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
       expect(checkboxElement.nativeElement.checked).toBe(true);
     });
+
+    it('should change complete if clicked', () => {
+      const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
+      checkboxElement.nativeElement.click();
+      fixture.detectChanges();
+
+      expect(component.task.complete).toBe(false);
+    });
+
+    it('should patch task if clicked', fakeAsync(() => {
+      const taskService = TestBed.get(TaskService);
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({status: 200}));
+
+      const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
+      checkboxElement.nativeElement.click();
+      tick();
+
+      expect(taskService.patchTaskById).toHaveBeenCalledWith('1', {complete: false});
+    }));
   });
 
   describe('description label', () => {
