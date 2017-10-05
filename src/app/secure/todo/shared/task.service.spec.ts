@@ -158,11 +158,11 @@ describe('TaskService', () => {
   describe('createTask', () => {
     let task;
     beforeEach(() => {
-      task = {
+      task = new Task({
         id: 'i should not be included',
         description: 'math homework',
         complete: false
-      };
+      });
     });
     it('should use https', () => {
       mockBackend.connections.subscribe((connection: MockConnection) => {
@@ -183,9 +183,11 @@ describe('TaskService', () => {
     it('should post Task', () => {
       mockBackend.connections.subscribe((connection: MockConnection) => {
         const body = JSON.parse(connection.request.getBody());
-        expect(body.id).toBeUndefined();
-        expect(body.description).toBe('math homework');
-        expect(body.complete).toBe(false);
+        expect(body).toEqual({
+          id: 'i should not be included',
+          description: 'math homework',
+          complete: false
+        });
       });
 
       service.createTask(task);
@@ -214,7 +216,7 @@ describe('TaskService', () => {
         expect(connection.request.url.startsWith('https://')).toBe(true);
       });
 
-      service.updateTask(task);
+      service.updateTaskById(task.id, task);
     });
 
     it('should use /task/{id}', () => {
@@ -222,26 +224,29 @@ describe('TaskService', () => {
         expect(connection.request.url.endsWith('/task/i-should-be-included')).toBe(true);
       });
 
-      service.updateTask(task);
+      service.updateTaskById(task.id, task);
     });
 
-    it('should post Task', () => {
+    it('should update Task with', () => {
       mockBackend.connections.subscribe((connection: MockConnection) => {
         const body = JSON.parse(connection.request.getBody());
-        expect(body.id).toBe('i-should-be-included');
-        expect(body.description).toBe('science worksheet');
-        expect(body.complete).toBe(true);
+
+        expect(body.id).toBeUndefined();
+        expect(body).toEqual({
+          description: 'science worksheet',
+          complete: true
+        });
       });
 
-      service.updateTask(task);
+      service.updateTaskById(task.id, task);
     });
 
-    it('should POST', () => {
+    it('should PUT', () => {
       mockBackend.connections.subscribe((connection: MockConnection) => {
         expect(connection.request.method).toBe(RequestMethod.Put);
       });
 
-      service.updateTask(task);
+      service.updateTaskById(task.id, task);
     });
   });
 

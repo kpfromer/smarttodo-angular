@@ -23,19 +23,16 @@ export class TaskService {
     return this.http.get(`https://${url}/task/${id}`);
   }
 
-  createTask(task: {description: string, complete: boolean}) {
-    return this.http.post(`https://${url}/tasks`, JSON.stringify({
-      description: task.description, complete: task.complete
-    }));
+  createTask(task: Task) {
+    return this.http.post(`https://${url}/tasks`, JSON.stringify(task));
   }
 
-  // todo: rename to putTask
-  updateTask(task: Task) { // todo: have separate parameter for id, ID is included in JSON.stringify(task) and adding id to backend!
-    return this.http.put(`https://${url}/task/${task.id}`, JSON.stringify(task));
+  updateTaskById(id: string, task: Task) {
+    delete task.id;
+    return this.http.put(`https://${url}/task/${id}`, JSON.stringify(task));
   }
 
   patchTaskById(id: string, properties) {
-    // todo: test
     return this.http.patch(`https://${url}/task/${id}`, JSON.stringify(properties));
   }
 
