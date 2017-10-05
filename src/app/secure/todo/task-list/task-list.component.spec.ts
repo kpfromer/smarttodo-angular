@@ -32,10 +32,6 @@ class MockNewTaskDirective {
 
 class MockTaskService {
 
-  updateTasks() {
-    return;
-  }
-
   getTasks() {
     return Observable.of(new Response(new ResponseOptions({
       status: 200,
@@ -45,7 +41,7 @@ class MockTaskService {
     })));
   }
 
-  updateTask(task: { id: string, description: string, complete: boolean }) {
+  createTask(task: { id: string, description: string, complete: boolean }) {
     return;
   }
 }
@@ -226,16 +222,16 @@ describe('TaskListComponent', () => {
     });
 
     it('should generate a uuid for task', fakeAsync(() => {
-      const updateTask = spyOn(taskService, 'updateTask').and.returnValue(Observable.of({status: 200}));
+      const createTask = spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 200}));
       component.createTask(task);
       tick();
 
-      const argumentObject = updateTask.calls.mostRecent().args[0];
+      const argumentObject = createTask.calls.mostRecent().args[0];
       expect(argumentObject.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
     }));
 
     it('should add it to tasks', () => {
-      spyOn(taskService, 'updateTask').and.returnValue(Observable.of({status: 200}));
+      spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 200}));
 
       component.createTask(task);
 
@@ -249,7 +245,7 @@ describe('TaskListComponent', () => {
     });
 
     it('should post to taskService', fakeAsync(() => {
-      const update = spyOn(taskService, 'updateTask').and.returnValue(Observable.of({status: 200}));
+      const update = spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 200}));
 
       component.createTask(task);
       tick();
@@ -262,7 +258,7 @@ describe('TaskListComponent', () => {
     }));
 
     it('should render error flashmessage when status code is not 200', fakeAsync(() => {
-      spyOn(taskService, 'updateTask').and.returnValue(Observable.of({status: 400}));
+      spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 400}));
       let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
       expect(flashmessage).toBeNull();
 
@@ -276,7 +272,7 @@ describe('TaskListComponent', () => {
     }));
 
     it('should render error flashmessage when 404 error', fakeAsync(() => {
-      spyOn(taskService, 'updateTask').and.returnValue(Observable.throw(new HttpErrorResponse({
+      spyOn(taskService, 'createTask').and.returnValue(Observable.throw(new HttpErrorResponse({
         error: 'a 404 error'
       })));
       let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
@@ -293,7 +289,7 @@ describe('TaskListComponent', () => {
 
     // todo: should we make test dry? Will it make it less readable?
     it('should render error flashmessage when client side error', fakeAsync(() => {
-      spyOn(taskService, 'updateTask').and.returnValue(Observable.throw(new HttpErrorResponse({
+      spyOn(taskService, 'createTask').and.returnValue(Observable.throw(new HttpErrorResponse({
         error: new Error('a client side error!')
       })));
       let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
