@@ -43,6 +43,7 @@ describe('InlineEditorComponent', () => {
       fixture = TestBed.createComponent(InlineEditorComponent);
       component = fixture.componentInstance;
 
+      component.forId = 'inputId';
       component.required = true;
       component.disabled = false;
       component.type = 'text';
@@ -107,7 +108,7 @@ describe('InlineEditorComponent', () => {
           fixture.detectChanges();
 
           expect(component.cancelEditing).toHaveBeenCalled();
-        }); // https://stackoverflow.com/questions/41135875/unable-to-simulate-keypress-event-in-angular-2-unit-test-jasmine
+        });
 
         it('should doneEditing on enter keypress', () => {
           const inputElement = fixture.debugElement.query(By.css('input'));
@@ -158,6 +159,12 @@ describe('InlineEditorComponent', () => {
         fixture.detectChanges();
 
         expect(component.startEditing).toHaveBeenCalled();
+      });
+
+      it('should be set for id', () => {
+        const textElement = fixture.debugElement.query(By.css('.inline-text'));
+
+        expect(textElement.nativeElement.getAttribute('for')).toBe('inputId');
       });
     });
 
@@ -290,6 +297,8 @@ describe('InlineEditorComponent', () => {
         expect(component.save).toHaveBeenCalledWith({input: 'my name is now kyle.'});
       });
     });
+
+    // todo: add tests for inputs!
   });
 
 });

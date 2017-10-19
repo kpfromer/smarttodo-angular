@@ -24,8 +24,11 @@ export class InlineEditorComponent implements OnInit, ControlValueAccessor {
   @Output() onSave = new EventEmitter<{ input: any }>();
   @Input() required = false;
   @Input() disabled = false;
+  @Input() forId: string = null;
+
   public onChange = (_: any) => {
   };
+
   private _pastValue: any = '';
 
   constructor() {
