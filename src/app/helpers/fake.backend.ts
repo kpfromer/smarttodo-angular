@@ -77,7 +77,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
           } else if (connection.request.method === RequestMethod.Post) {
             const body = JSON.parse(connection.request.getBody());
             data.push({
-              id: 'database-id',
+              id: body.id,
               description: body.description,
               complete: body.complete
             });
@@ -107,7 +107,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
           ));
         }
       }
-      if (connection.request.url.includes('/task/')) {
+      if (connection.request.url.includes('/task/')) { // todo: use endWith, regex
         const id = connection.request.url.split('/task/')[1];
         if (connection.request.method === RequestMethod.Put) {
           const body = JSON.parse(connection.request.getBody());
