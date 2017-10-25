@@ -42,7 +42,7 @@ describe('NewTaskComponent', () => {
 
       submitForm();
 
-      expect(component.createTask).toHaveBeenCalledWith('Hello!', false);
+      expect(component.createTask).toHaveBeenCalledWith('Hello!');
     });
 
     it('should not be called if validation errors', () => {

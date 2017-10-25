@@ -1,15 +1,11 @@
 <li class="collection-item">
   <form method="post" class="col s12" [formGroup]="newTaskForm"
-        (submit)="newTaskForm.valid && createTask(newTaskForm.get('description').value, false)">
+        (submit)="newTaskForm.valid && createTask(newTaskForm.get('description').value)">
     <div class="row">
       <div class="input-field col s9">
-        <input id="descriptionInput" type="text" name="description" autocomplete="off" formControlName="description"/>
+        <input id="descriptionInput" type="text" name="description" autocomplete="off" formControlName="description">
         <label for="descriptionInput" class="">Task Title</label>
       </div>
-      <!--<div class="input-field col s3">-->
-      <!--<input id="todo-event" type="text" class="validate enter-onSubmit" name="eventText" value="" th:field="*{eventText}" autocomplete="off" />-->
-      <!--<label for="todo-event" class="">Event Date</label>-->
-      <!--</div>-->
     </div>
   </form>
 </li>
