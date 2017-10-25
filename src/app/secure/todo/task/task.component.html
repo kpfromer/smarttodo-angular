@@ -1,10 +1,6 @@
 <li class="collection-item">
   <input type="checkbox" [id]="'task'+task.id" [checked]="task.complete" (change)="click(!task.complete)">
-  <label [for]="'task'+task.id" [ngStyle]="{'text-decoration': task.complete ? 'line-through' : null}">
-    {{task.description}}
-    <!--<a href="#" class="secondary-content">-->
-    <!--<span class="ultra-small">Now</span>-->
-    <!--</a>-->
-  </label>
-  <!--<span class="task-cat teal">Work</span>-->
+  <app-inline-editor [forId]="'task'+task.id" type="text" [required]="true" (onSave)="updateDescription($event.input)"
+                     [ngModel]="task.description"
+                     [ngStyle]="{'text-decoration': task.complete ? 'line-through' : null}"></app-inline-editor>
 </li>

@@ -5,12 +5,28 @@ import {Task} from '../shared/task';
 import {By} from '@angular/platform-browser';
 import {TaskService} from '../shared/task.service';
 import {Observable} from 'rxjs/Observable';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 
 class MockTaskService {
 
   patchTaskById(id: string, properties) {
     return;
   }
+}
+
+@Directive({
+  selector: 'app-inline-editor'
+})
+class MockInlineEditorDirective {
+
+  @Output() onSave = new EventEmitter<{ input: any }>();
+  @Input() required: boolean;
+  @Input() disabled = false;
+  @Input() forId: string;
+  @Input() type: string;
+
+  @Input() ngModel;
 }
 
 describe('TaskComponent', () => {
@@ -20,7 +36,8 @@ describe('TaskComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       providers: [{provide: TaskService, useClass: MockTaskService}],
-      declarations: [TaskComponent]
+      declarations: [TaskComponent, MockInlineEditorDirective],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
   }));
@@ -72,28 +89,168 @@ describe('TaskComponent', () => {
     }));
   });
 
-  describe('description label', () => {
+  describe('description inline editor', () => {
     it('should be for the checkbox', () => {
-      const labelElement = fixture.debugElement.query(By.css('label'));
-      expect(labelElement.nativeElement.getAttribute('for')).toBe(`task${component.task.id}`);
+      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
+        .injector.get(MockInlineEditorDirective);
+
+      expect(inlineEditor.forId).toBe(`task${component.task.id}`);
+    });
+
+    it('should input text', () => {
+      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
+        .injector.get(MockInlineEditorDirective);
+
+      expect(inlineEditor.type).toBe('text');
+    });
+
+    it('should be required', () => {
+      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
+        .injector.get(MockInlineEditorDirective);
+
+      expect(inlineEditor.required).toBe(true);
+    });
+
+    it('should not be disabled', () => {
+      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
+        .injector.get(MockInlineEditorDirective);
+
+      expect(inlineEditor.disabled).toBe(false);
     });
 
     it('should display task description', () => {
-      const labelElement = fixture.debugElement.query(By.css('label'));
-      expect(labelElement.nativeElement.textContent.includes('Hello!')).toBe(true);
+      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
+        .injector.get(MockInlineEditorDirective);
+
+      expect(inlineEditor.ngModel).toBe('Hello!');
     });
 
     it('should have text-decoration style of line-through', () => {
-      const labelElement = fixture.debugElement.query(By.css('label'));
-      expect(labelElement.nativeElement.style.textDecorationLine).toBe('line-through');
+      const inlineEditorElement = fixture.debugElement.query(By.directive(MockInlineEditorDirective));
+
+      expect(inlineEditorElement.nativeElement.style.textDecorationLine).toBe('line-through');
     });
 
     it('should remove text-decoration style of line-through', () => {
       component.task.complete = false;
       fixture.detectChanges();
 
-      const labelElement = fixture.debugElement.query(By.css('label'));
-      expect(labelElement.nativeElement.style.textDecorationLine).toBeFalsy();
+      const inlineEditorElement = fixture.debugElement.query(By.directive(MockInlineEditorDirective));
+      expect(inlineEditorElement.nativeElement.style.textDecorationLine).toBeFalsy();
     });
+  });
+});
+
+@Component({
+  template: `
+    <app-task #taskEle [task]="task" (onError)="error = true"></app-task>
+  `
+})
+class HostComponent {
+
+  @ViewChild('taskEle') taskElement: TaskComponent;
+
+  task: Task;
+
+  error: boolean;
+}
+
+describe('TaskComponent: HostComponent', () => {
+  let component: HostComponent;
+  let fixture: ComponentFixture<HostComponent>;
+  let taskService: TaskService;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      providers: [{provide: TaskService, useClass: MockTaskService}],
+      declarations: [
+        MockInlineEditorDirective,
+        TaskComponent,
+        HostComponent
+      ],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(HostComponent);
+    component = fixture.componentInstance;
+    taskService = TestBed.get(TaskService);
+
+    component.task = new Task({
+      id: 'coolId',
+      description: 'math/science',
+      complete: false
+    });
+    component.error = false;
+
+    fixture.detectChanges();
+  });
+
+  describe('check', () => {
+    it('should emit onError when not a 200 status', fakeAsync(() => {
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({status: 400}));
+
+      component.taskElement.click(true);
+      tick();
+
+      expect(component.error).toBe(true);
+    }));
+
+    it('should emit onError when not a 404 status', fakeAsync(() => {
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.throw(new HttpErrorResponse({
+        error: '404 error'
+      })));
+
+      component.taskElement.click(true);
+      tick();
+
+      expect(component.error).toBe(true);
+    }));
+
+    it('should emit onError when not a client side error occurs', fakeAsync(() => {
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.throw(new HttpErrorResponse({
+        error: new Error('a client side error!')
+      })));
+
+      component.taskElement.click(true);
+      tick();
+
+      expect(component.error).toBe(true);
+    }));
+  });
+
+  describe('updateDescription', () => {
+    it('should emit onError when not a 200 status', fakeAsync(() => {
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({status: 400}));
+
+      component.taskElement.updateDescription('new Description!');
+      tick();
+
+      expect(component.error).toBe(true);
+    }));
+
+    it('should emit onError when not a 404 status', fakeAsync(() => {
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.throw(new HttpErrorResponse({
+        error: '404 error'
+      })));
+
+      component.taskElement.updateDescription('new Description!');
+      tick();
+
+      expect(component.error).toBe(true);
+    }));
+
+    it('should emit onError when not a client side error occurs', fakeAsync(() => {
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.throw(new HttpErrorResponse({
+        error: new Error('a client side error!')
+      })));
+
+      component.taskElement.updateDescription('new Description!');
+      tick();
+
+      expect(component.error).toBe(true);
+    }));
   });
 });
