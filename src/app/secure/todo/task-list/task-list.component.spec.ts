@@ -162,18 +162,28 @@ describe('TaskListComponent', () => {
     const task = fixture.debugElement.query(By.directive(MockTaskDirective))
       .injector.get(MockTaskDirective) as MockTaskDirective;
 
-    let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-    expect(flashmessage).toBeNull();
-    // todo: move to own test
-
     task.onError.emit(new Error('Wow, an error!'));
     tick();
     fixture.detectChanges();
 
-    flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-    expect(flashmessage).toBeTruthy(); // todo: move to own test?
     expect(component.error).toBe(true);
   }));
+
+  it('should not display flashmessage on load', () => {
+    component.error = false;
+    fixture.detectChanges();
+
+    const flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+    expect(flashmessage).toBeNull();
+  });
+
+  it('should display flashmessage on error', () => {
+    component.error = true;
+    fixture.detectChanges();
+
+    const flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+    expect(flashmessage).toBeTruthy();
+  });
 
   describe('getTasks', () => {
     it('should get tasks', fakeAsync(() => {
@@ -209,15 +219,11 @@ describe('TaskListComponent', () => {
 
     it('should render error flashmessage when status code is not 200', fakeAsync(() => {
       spyOn(taskService, 'getTasks').and.returnValue(Observable.of({status: 400}));
-      let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeNull();
 
       component.getTasks();
       tick();
       fixture.detectChanges();
 
-      flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeTruthy();
       expect(component.error).toBe(true);
     }));
 
@@ -225,32 +231,23 @@ describe('TaskListComponent', () => {
       spyOn(taskService, 'getTasks').and.returnValue(Observable.throw(new HttpErrorResponse({
         error: 'a 404 error'
       })));
-      let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeNull();
 
       component.getTasks();
       tick();
       fixture.detectChanges();
 
-      flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeTruthy();
       expect(component.error).toBe(true);
     }));
 
-    // todo: should we make test dry? Will it make it less readable?
     it('should render error flashmessage when client side error', fakeAsync(() => {
       spyOn(taskService, 'getTasks').and.returnValue(Observable.throw(new HttpErrorResponse({
         error: new Error('a client side error!')
       })));
-      let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeNull();
 
       component.getTasks();
       tick();
       fixture.detectChanges();
 
-      flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeTruthy();
       expect(component.error).toBe(true);
     }));
   });
@@ -304,15 +301,11 @@ describe('TaskListComponent', () => {
 
     it('should render error flashmessage when status code is not 200', fakeAsync(() => {
       spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 400}));
-      let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeNull();
 
       component.createTask(task);
       tick();
       fixture.detectChanges();
 
-      flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeTruthy();
       expect(component.error).toBe(true);
     }));
 
@@ -320,32 +313,23 @@ describe('TaskListComponent', () => {
       spyOn(taskService, 'createTask').and.returnValue(Observable.throw(new HttpErrorResponse({
         error: 'a 404 error'
       })));
-      let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeNull();
 
       component.createTask(task);
       tick();
       fixture.detectChanges();
 
-      flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeTruthy();
       expect(component.error).toBe(true);
     }));
 
-    // todo: should we make test dry? Will it make it less readable?
     it('should render error flashmessage when client side error', fakeAsync(() => {
       spyOn(taskService, 'createTask').and.returnValue(Observable.throw(new HttpErrorResponse({
         error: new Error('a client side error!')
       })));
-      let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeNull();
 
       component.createTask(task);
       tick();
       fixture.detectChanges();
 
-      flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
-      expect(flashmessage).toBeTruthy();
       expect(component.error).toBe(true);
     }));
   });
