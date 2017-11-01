@@ -18,6 +18,8 @@ import any = jasmine.any;
 class MockTaskDirective {
   @Input('task')
   public task: Task;
+
+  @Output() onError = new EventEmitter<Error | HttpErrorResponse>();
 }
 
 @Directive({
@@ -129,6 +131,49 @@ describe('TaskListComponent', () => {
       complete: true
     }));
   });
+
+  it('should create a new task', fakeAsync(() => {
+    spyOn(component, 'createTask');
+    const newTask = fixture.debugElement.query(By.directive(MockNewTaskDirective))
+      .injector.get(MockNewTaskDirective) as MockNewTaskDirective;
+
+    newTask.onCreate.emit({
+      description: 'hello description',
+      complete: false
+    });
+    tick();
+
+    expect(component.createTask).toHaveBeenCalledWith({
+      description: 'hello description',
+      complete: false
+    });
+  }));
+
+  it('should render error flashmessage when error for a task', fakeAsync(() => {
+    component.tasks = [
+      new Task({
+        id: '1',
+        description: 'math worksheet',
+        complete: false
+      })
+    ];
+    fixture.detectChanges();
+
+    const task = fixture.debugElement.query(By.directive(MockTaskDirective))
+      .injector.get(MockTaskDirective) as MockTaskDirective;
+
+    let flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+    expect(flashmessage).toBeNull();
+    // todo: move to own test
+
+    task.onError.emit(new Error('Wow, an error!'));
+    tick();
+    fixture.detectChanges();
+
+    flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+    expect(flashmessage).toBeTruthy(); // todo: move to own test?
+    expect(component.error).toBe(true);
+  }));
 
   describe('getTasks', () => {
     it('should get tasks', fakeAsync(() => {
@@ -304,23 +349,6 @@ describe('TaskListComponent', () => {
       expect(component.error).toBe(true);
     }));
   });
-
-  it('should create a new task', fakeAsync(() => {
-    spyOn(component, 'createTask');
-    const newTask = fixture.debugElement.query(By.directive(MockNewTaskDirective))
-      .injector.get(MockNewTaskDirective) as MockNewTaskDirective;
-
-    newTask.onCreate.emit({
-      description: 'hello description',
-      complete: false
-    });
-    tick();
-
-    expect(component.createTask).toHaveBeenCalledWith({
-      description: 'hello description',
-      complete: false
-    });
-  }));
 
   // todo: upload tasks to website on reconnect
 

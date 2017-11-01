@@ -4,5 +4,5 @@
   You might want to try again.
 </app-flash-message>
 
-<app-task *ngFor="let task of tasks" [task]="task"></app-task>
+<app-task *ngFor="let task of tasks" [task]="task" (onError)="error = true"></app-task>
 <app-new-task (onCreate)="createTask($event)"></app-new-task>
