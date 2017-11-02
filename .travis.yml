@@ -21,8 +21,6 @@ before_install:
 install:
   - npm install -g angular-cli
   - npm install
-    - export DISPLAY=:99.0
-    - sh -e /etc/init.d/xvfb start
 
 script:
   - xvfb-run -a ng test -- --single-run --no-progress --browser=ChromeNoSandbox
