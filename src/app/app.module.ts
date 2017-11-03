@@ -11,6 +11,7 @@ import {BaseRequestOptions, Http, HttpModule, XHRBackend} from '@angular/http';
 import {environment} from '../environments/environment';
 import {AuthService} from './shared/auth.service';
 import {realBackendFactory} from './helpers/real.backend';
+import {LocalStorageService, WebStorageModule} from 'ngx-store';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import {realBackendFactory} from './helpers/real.backend';
     BrowserModule,
     AuthModule,
     HttpModule,
+    WebStorageModule,
     AppRoutingModule
   ],
   providers: [
@@ -32,7 +34,7 @@ import {realBackendFactory} from './helpers/real.backend';
     } : {
       provide: Http,
       useFactory: fakeBackendFactory,
-      deps: [MockBackend, BaseRequestOptions]
+      deps: [MockBackend, BaseRequestOptions, LocalStorageService]
     },
     XHRBackend,
     MockBackend,

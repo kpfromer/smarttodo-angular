@@ -1,15 +1,16 @@
 import {BaseRequestOptions, Http, RequestMethod, Response, ResponseOptions} from '@angular/http';
 import {MockBackend, MockConnection} from '@angular/http/testing';
 import {encodeTestToken} from 'angular2-jwt/angular2-jwt-test-helpers';
+import {LocalStorageService} from 'ngx-store';
 
-export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOptions) {
+export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOptions, localStorageService: LocalStorageService) {
   const id_token = encodeTestToken({
     'exp': 9999999999
   });
   // configure fake backend
   backend.connections.subscribe((connection: MockConnection) => {
 
-    const data: any[] = JSON.parse(localStorage.getItem('tasks')) || [
+    const data: any[] = localStorageService.get('tasks') || [
       {
         id: 'one',
         description: 'math hw',
@@ -82,7 +83,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
               complete: body.complete
             });
 
-            localStorage.setItem('tasks', JSON.stringify(data));
+            localStorageService.set('tasks', data);
 
             connection.mockRespond(new Response(
               new ResponseOptions({
@@ -117,7 +118,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
             complete: body.complete
           });
 
-          localStorage.setItem('tasks', JSON.stringify(data));
+          localStorageService.set('tasks', data);
 
           connection.mockRespond(new Response(
             new ResponseOptions({status: 200})
@@ -130,7 +131,7 @@ export function fakeBackendFactory(backend: MockBackend, options: BaseRequestOpt
             data[taskIndex][prop] = body[prop];
           }
 
-          localStorage.setItem('tasks', JSON.stringify(data));
+          localStorageService.set('tasks', data);
 
           connection.mockRespond(new Response(
             new ResponseOptions({
