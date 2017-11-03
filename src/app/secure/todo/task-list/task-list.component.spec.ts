@@ -32,6 +32,13 @@ class MockNewTaskDirective {
   }>();
 }
 
+@Directive({
+  selector: 'app-flash-message'
+})
+class MockFlashMessage {
+
+}
+
 class MockTaskService {
 
   getTasks() {
@@ -63,7 +70,8 @@ describe('TaskListComponent', () => {
       declarations: [
         TaskListComponent,
         MockNewTaskDirective,
-        MockTaskDirective
+        MockTaskDirective,
+        MockFlashMessage
       ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
@@ -173,7 +181,7 @@ describe('TaskListComponent', () => {
     component.error = false;
     fixture.detectChanges();
 
-    const flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+    const flashmessage = fixture.debugElement.query(By.directive(MockFlashMessage));
     expect(flashmessage).toBeNull();
   });
 
@@ -181,7 +189,7 @@ describe('TaskListComponent', () => {
     component.error = true;
     fixture.detectChanges();
 
-    const flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+    const flashmessage = fixture.debugElement.query(By.directive(MockFlashMessage));
     expect(flashmessage).toBeTruthy();
   });
 
