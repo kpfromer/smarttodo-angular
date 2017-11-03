@@ -266,7 +266,7 @@ describe('InlineEditorComponent', () => {
 
   });
 
-  describe('create TestHost Component', () => {
+  describe('InlineEditorComponent: HostComponent', () => {
     let component: TestHostComponent;
     let fixture: ComponentFixture<TestHostComponent>;
 
