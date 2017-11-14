@@ -73,7 +73,9 @@ describe('LoginComponent', () => {
     it('should login the user', fakeAsync(() => {
       spyOn(loginService, 'login').and.returnValue(Promise.resolve(true));
 
-      component.login('test', 'testPassword');
+      component.loginForm.setValue({username: 'test', password: 'testPassword'});
+
+      component.login();
       tick();
 
       expect(loginService.login).toHaveBeenCalledWith('test', 'testPassword');
@@ -82,7 +84,9 @@ describe('LoginComponent', () => {
     it('should redirect logged in user to /todo', fakeAsync(() => {
       spyOn(loginService, 'login').and.returnValue(Promise.resolve(true));
 
-      component.login('test', 'testPassword');
+      component.loginForm.setValue({username: 'test', password: 'testPassword'});
+
+      component.login();
       tick();
 
       expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/todo');
@@ -93,7 +97,9 @@ describe('LoginComponent', () => {
 
       expect(component.notValidUser).toBe(false);
 
-      component.login('test', 'testPassword');
+      component.loginForm.setValue({username: 'test', password: 'testPassword'});
+
+      component.login();
       tick();
 
       expect(component.notValidUser).toBe(true);
@@ -106,7 +112,9 @@ describe('LoginComponent', () => {
       spyOn(component.loginForm.get('username'), 'setErrors');
       spyOn(component.loginForm.get('password'), 'setErrors');
 
-      component.login('test', 'testPassword');
+      component.loginForm.setValue({username: 'test', password: 'testPassword'});
+
+      component.login();
       tick();
 
       expect(component.loginForm.reset).toHaveBeenCalled();
@@ -123,7 +131,7 @@ describe('LoginComponent', () => {
       submit.nativeElement.click();
       fixture.detectChanges();
 
-      expect(component.login).toHaveBeenCalledWith('a cool username', 'a cool password');
+      expect(component.login).toHaveBeenCalled();
     });
 
     it('should not be called if validation errors', () => {
@@ -137,6 +145,15 @@ describe('LoginComponent', () => {
 
       expect(component.login).not.toHaveBeenCalled();
     });
+
+    it('should return false if the form is invalid', fakeAsync(() => {
+      component.loginForm.setValue({username: '', password: ''});
+
+      const loggedIn = component.login();
+      tick();
+
+      expect(loggedIn).toBe(false);
+    }));
   });
 
   describe('view', () => {

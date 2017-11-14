@@ -17,8 +17,12 @@ export class LoginComponent implements OnInit {
   constructor(private loginService: AuthService, private router: Router, private formBuilder: FormBuilder) {
   }
 
-  login(username: string, password: string) {
-    if (this.loginForm.invalid) return;
+  login() {
+    if (!this.loginForm.valid)
+      return false;
+
+    const username = this.loginForm.value.username;
+    const password = this.loginForm.value.password;
 
     this.loginForm.reset();
     this.loginForm.get('username').setErrors({});
