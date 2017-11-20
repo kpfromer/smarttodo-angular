@@ -17,28 +17,28 @@ export class TaskService {
   // todo: add edge case handling
 
   getTasks() {
-    return this.http.get<Data>(`https://${url}/tasks`);
+    return this.http.get<Data>(`${url}/tasks`);
   }
 
   getTaskById(id: string) {
-    return this.http.get<Data>(`https://${url}/task/${id}`);
+    return this.http.get<Data>(`${url}/task/${id}`);
   }
 
   createTask(task: Task) {
-    return this.http.post<Data>(`https://${url}/tasks`, JSON.stringify(task));
+    return this.http.post<Data>(`${url}/tasks`, JSON.stringify(task));
   }
 
   updateTaskById(id: string, task: Task) {
     delete task.id;
-    return this.http.put<Data>(`https://${url}/task/${id}`, JSON.stringify(task));
+    return this.http.put<Data>(`${url}/task/${id}`, JSON.stringify(task));
   }
 
   patchTaskById(id: string, properties) { // todo: remove?
-    return this.http.patch<Data>(`https://${url}/task/${id}`, JSON.stringify(properties));
+    return this.http.patch<Data>(`${url}/task/${id}`, JSON.stringify(properties));
   }
 
   deleteTaskById(id: string) {
-    return this.http.delete<Data>(`https://${url}/task/${id}`);
+    return this.http.delete<Data>(`${url}/task/${id}`);
   }
 
   private handleError() {
