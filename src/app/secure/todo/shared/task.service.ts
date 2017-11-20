@@ -25,16 +25,15 @@ export class TaskService {
   }
 
   createTask(task: Task) {
-    return this.http.post<Data>(`${url}/tasks`, JSON.stringify(task));
+    return this.http.post<Data>(`${url}/tasks`, task);
   }
 
-  updateTaskById(id: string, task: Task) {
-    delete task.id;
-    return this.http.put<Data>(`${url}/task/${id}`, JSON.stringify(task));
+  updateTaskById(task: Task) {
+    return this.http.put<Data>(`${url}/task/${task.id}`, task);
   }
 
   patchTaskById(id: string, properties) { // todo: remove?
-    return this.http.patch<Data>(`${url}/task/${id}`, JSON.stringify(properties));
+    return this.http.patch<Data>(`${url}/task/${id}`, properties);
   }
 
   deleteTaskById(id: string) {
