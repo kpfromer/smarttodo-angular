@@ -5,7 +5,6 @@ import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app.routing';
 import {PageNotFoundComponent} from './page-not-found/page-not-found.component';
 import {AuthService} from './shared/auth.service';
-import {WebStorageModule} from 'ngx-store';
 import {JwtModule} from '@auth0/angular-jwt';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {DefaultInterceptor} from './shared/default.interceptor';
@@ -25,7 +24,6 @@ import {DefaultInterceptor} from './shared/default.interceptor';
         }
       }
     }),
-    WebStorageModule,
     AppRoutingModule
   ],
   providers: [
