@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
 import 'rxjs/add/operator/map';
 import {environment} from '../../environments/environment';
-import * as _ from 'lodash';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {HttpClient} from '@angular/common/http';
-import {Data} from '@angular/router';
 import {Subject} from 'rxjs/Subject';
 
 const url = environment.apiUrl;
+
+interface Token {
+  authHeader: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -16,31 +18,30 @@ export class AuthService {
   }
 
   login(username: string, password: string) {
-    const subject = new Subject<boolean>();
+    const loggedIn = new Subject<boolean>();
 
-    this.http.post<Data>(`${url}/authenticate`, {username, password})
-      .subscribe(
-        base => {
-          const token = _.get(base, 'data.id_token');
-          const error = _.get(base, 'error');
-          if (error || !token) {
-            subject.next(false);
+    this.http.post<Token>(`${url}/authenticate`, {username, password})
+      .subscribe(token => {
+          if (token.authHeader) {
+            localStorage.setItem('id_token', token.authHeader);
+            loggedIn.next(true);
           } else {
-            localStorage.setItem('id_token', base.data.id_token);
-            subject.next(true);
+            loggedIn.next(false);
           }
-          subject.complete();
-        },
-        error => {
-          subject.error(error);
-          subject.complete();
+          loggedIn.complete();
+        }, error => {
+          if (error.status && error.status === 400) {
+            loggedIn.next(false);
+          } else {
+            loggedIn.error(error);
+          }
+          loggedIn.complete();
         }
       );
-    return subject;
+    return loggedIn;
   }
 
-  logout(): void {
-    // clear token remove user from local storage to log user out
+  logout() {
     localStorage.removeItem('id_token');
   }
 

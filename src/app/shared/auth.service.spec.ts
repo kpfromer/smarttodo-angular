@@ -1,9 +1,11 @@
 import {TestBed} from '@angular/core/testing';
 import {AuthService} from './auth.service';
 import 'rxjs/add/observable/of';
-import * as _ from 'lodash';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import {environment} from '../../environments/environment';
+
+const url = environment.apiUrl;
 
 class MockJwtService {
   isTokenExpired() {
@@ -40,9 +42,7 @@ describe('AuthService', () => {
 
     beforeEach(() => {
       validResponse = {
-        data: {
-          id_token: 'i am a token!'
-        }
+        authHeader: 'i am a token!'
       };
 
       http = TestBed.get(HttpTestingController);
@@ -53,16 +53,16 @@ describe('AuthService', () => {
       http.verify();
     });
 
-    it('should use authenticate', () => {
+    it('should use /authenticate', () => {
       authService.login('admin', 'secret');
 
-      http.expectOne('testUrl/authenticate').flush(validResponse);
+      http.expectOne(`${url}/authenticate`).flush(validResponse);
     });
 
     it('should post', () => {
       authService.login('admin', 'secret');
 
-      const req = http.expectOne('testUrl/authenticate');
+      const req = http.expectOne(`${url}/authenticate`);
       expect(req.request.method).toBe('POST');
     });
 
@@ -71,7 +71,7 @@ describe('AuthService', () => {
         expect(localStorage.setItem).toHaveBeenCalledWith('id_token', 'i am a token!');
       });
 
-      http.expectOne('testUrl/authenticate').flush(validResponse);
+      http.expectOne(`${url}/authenticate`).flush(validResponse);
     });
 
     it('should return true when successful', () => {
@@ -79,7 +79,7 @@ describe('AuthService', () => {
         expect(value).toBe(true);
       });
 
-      http.expectOne('testUrl/authenticate').flush(validResponse);
+      http.expectOne(`${url}/authenticate`).flush(validResponse);
     });
 
     it('should return false when username/password are not found', () => {
@@ -87,24 +87,23 @@ describe('AuthService', () => {
         expect(value).toBe(false);
       });
 
-      http.expectOne('testUrl/authenticate').flush({
-        error: {
-          code: 404,
-          message: 'Username/Password not found'
-        }
+      http.expectOne(`${url}/authenticate`).flush({
+        statusCode: 400,
+        error: 'Bad Request',
+        message: 'Invalid Email or Password.'
+      }, {
+        status: 400,
+        statusText: 'Invalid Email or Password.'
       });
     });
 
     it('should return false when there is no token found', () => {
-      spyOn(_, 'get');
-
       authService.login('admin', 'secret').subscribe(value => {
         expect(value).toBe(false);
-        expect(_.get).toHaveBeenCalledWith({}, 'data.id_token');
         expect(localStorage.setItem).not.toHaveBeenCalled();
       });
 
-      http.expectOne('testUrl/authenticate').flush({});
+      http.expectOne(`${url}/authenticate`).flush({});
     });
   });
 
