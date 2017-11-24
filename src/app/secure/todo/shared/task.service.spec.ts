@@ -44,26 +44,25 @@ describe('TaskService', () => {
     });
 
     it('should return a list of Tasks', () => {
-      service.getTasks().subscribe(base => {
-        expect(base.data[0]).toEqual({
+      service.getTasks().subscribe(tasks => {
+        expect(tasks[0]).toEqual({
           id: 'one',
           description: 'math hw',
           complete: false
-        });
-        expect(base.data[1]).toEqual({
+        } as Task);
+        expect(tasks[1]).toEqual({
           id: 'two',
           description: 'science workbook',
           complete: false
-        });
-        expect(base.data[2]).toEqual({
+        } as Task);
+        expect(tasks[2]).toEqual({
           id: 'three',
           description: 'pg 1-100',
           complete: true
-        });
+        } as Task);
       });
 
-      http.expectOne(`${url}/tasks`).flush({
-        data: [
+      http.expectOne(`${url}/tasks`).flush([
           {
             id: 'one',
             description: 'math hw',
@@ -79,8 +78,7 @@ describe('TaskService', () => {
             description: 'pg 1-100',
             complete: true
           }
-        ]
-      });
+      ]);
     });
   });
 
@@ -99,21 +97,19 @@ describe('TaskService', () => {
     });
 
     it('should return a Task', () => {
-      service.getTaskById('one').subscribe(base => {
-        expect(base.data).toEqual({
+      service.getTaskById('one').subscribe(task => {
+        expect(task).toEqual({
             id: 'one',
             description: 'a cool task',
             complete: true
-        });
+        } as Task);
       });
 
       http.expectOne(`${url}/task/one`).flush({
-        data: {
           id: 'one',
           description: 'a cool task',
           complete: true
-        }
-      });
+      } as Task);
     });
   });
 
