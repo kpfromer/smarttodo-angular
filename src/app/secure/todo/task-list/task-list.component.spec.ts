@@ -5,7 +5,6 @@ import {Task} from '../shared/task';
 import {CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Input, Output} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {TaskService} from '../shared/task.service';
-import {Response, ResponseOptions} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import {HttpErrorResponse} from '@angular/common/http';
@@ -42,12 +41,7 @@ class MockFlashMessage {
 class MockTaskService {
 
   getTasks() {
-    return Observable.of(new Response(new ResponseOptions({
-      status: 200,
-      body: {
-        data: []
-      }
-    })));
+    return Observable.of([]);
   }
 
   createTask(task: { id: string, description: string, complete: boolean }) {
@@ -64,9 +58,8 @@ describe('TaskListComponent', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        {provide: TaskService, useClass: MockTaskService},
-        /*{provide: TaskStorageService, useClass: MockLocalStorage}*/
-        ],
+        {provide: TaskService, useClass: MockTaskService}
+      ],
       declarations: [
         TaskListComponent,
         MockNewTaskDirective,
@@ -131,7 +124,7 @@ describe('TaskListComponent', () => {
     fixture.detectChanges();
 
     const mockTaskElement = fixture.debugElement.query(By.directive(MockTaskDirective));
-    const mockTaskComponent = mockTaskElement.injector.get(MockTaskDirective) as MockTaskDirective;
+    const mockTaskComponent = mockTaskElement.injector.get(MockTaskDirective) as MockTaskDirective; // todo fix to match test below
 
     expect(mockTaskComponent.task).toEqual(new Task({
       id: '1',
@@ -195,49 +188,30 @@ describe('TaskListComponent', () => {
 
   describe('getTasks', () => {
     it('should get tasks', fakeAsync(() => {
-      spyOn(taskService, 'getTasks').and.returnValue(Observable.of(
-        {
-          status: 200,
-          json: () => {
-            return {
-              data:
-                [
-                  {
-                    id: 'IDS!',
-                    description: 'hello!',
-                    complete: false
-                  }
-                ]
-            };
-          }
-        }
-      ));
-
-      component.getTasks();
-      tick();
-
-      expect(JSON.stringify(component.tasks)).toEqual(JSON.stringify([
+      spyOn(taskService, 'getTasks').and.returnValue(Observable.of([
         {
           id: 'IDS!',
           description: 'hello!',
           complete: false
         }
       ]));
-    }));
-
-    it('should render error flashmessage when status code is not 200', fakeAsync(() => {
-      spyOn(taskService, 'getTasks').and.returnValue(Observable.of({status: 400}));
 
       component.getTasks();
       tick();
-      fixture.detectChanges();
 
-      expect(component.error).toBe(true);
+      expect(component.tasks).toEqual([
+        {
+          id: 'IDS!',
+          description: 'hello!',
+          complete: false
+        }
+      ] as Task[]);
     }));
 
     it('should render error flashmessage when 404 error', fakeAsync(() => {
       spyOn(taskService, 'getTasks').and.returnValue(Observable.throw(new HttpErrorResponse({
-        error: 'a 404 error'
+        status: 404,
+        statusText: 'Not found'
       })));
 
       component.getTasks();
@@ -307,19 +281,10 @@ describe('TaskListComponent', () => {
       });
     }));
 
-    it('should render error flashmessage when status code is not 200', fakeAsync(() => {
-      spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 400}));
-
-      component.createTask(task);
-      tick();
-      fixture.detectChanges();
-
-      expect(component.error).toBe(true);
-    }));
-
     it('should render error flashmessage when 404 error', fakeAsync(() => {
       spyOn(taskService, 'createTask').and.returnValue(Observable.throw(new HttpErrorResponse({
-        error: 'a 404 error'
+        status: 404,
+        statusText: 'Not found'
       })));
 
       component.createTask(task);
