@@ -9,8 +9,7 @@ import {Component, CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Input, Outpu
 import {HttpErrorResponse} from '@angular/common/http';
 
 class MockTaskService {
-
-  patchTaskById(id: string, properties) {
+  patchTaskById(id: string, properties): Observable<Task> {
     return;
   }
 }
@@ -79,7 +78,7 @@ describe('TaskComponent', () => {
 
     it('should patch task if clicked', fakeAsync(() => {
       const taskService = TestBed.get(TaskService);
-      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({status: 200}));
+      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({}));
 
       const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
       checkboxElement.nativeElement.click();
@@ -92,7 +91,7 @@ describe('TaskComponent', () => {
   describe('description inline editor', () => {
     it('should be for the checkbox', () => {
       const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
-        .injector.get(MockInlineEditorDirective);
+        .injector.get(MockInlineEditorDirective); // todo Put in beforeEach
 
       expect(inlineEditor.forId).toBe(`task${component.task.id}`);
     });
@@ -189,18 +188,10 @@ describe('TaskComponent: HostComponent', () => {
   });
 
   describe('check', () => {
-    it('should emit onError when not a 200 status', fakeAsync(() => {
-      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({status: 400}));
-
-      component.taskElement.click(true);
-      tick();
-
-      expect(component.error).toBe(true);
-    }));
-
     it('should emit onError when not a 404 status', fakeAsync(() => {
       spyOn(taskService, 'patchTaskById').and.returnValue(Observable.throw(new HttpErrorResponse({
-        error: '404 error'
+        status: 404,
+        statusText: 'Not found'
       })));
 
       component.taskElement.click(true);
@@ -222,15 +213,6 @@ describe('TaskComponent: HostComponent', () => {
   });
 
   describe('updateDescription', () => {
-    it('should emit onError when not a 200 status', fakeAsync(() => {
-      spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({status: 400}));
-
-      component.taskElement.updateDescription('new Description!');
-      tick();
-
-      expect(component.error).toBe(true);
-    }));
-
     it('should emit onError when not a 404 status', fakeAsync(() => {
       spyOn(taskService, 'patchTaskById').and.returnValue(Observable.throw(new HttpErrorResponse({
         error: '404 error'
