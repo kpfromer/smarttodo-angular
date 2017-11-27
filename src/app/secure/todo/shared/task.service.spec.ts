@@ -1,34 +1,28 @@
-import {TestBed} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 
 import {TaskService} from './task.service';
-import {AuthHttp} from 'angular2-jwt';
-import {MockBackend, MockConnection} from '@angular/http/testing';
-import {BaseRequestOptions, Http, HttpModule, RequestMethod, Response, ResponseOptions} from '@angular/http';
 import {Task} from './task';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {environment} from '../../../../environments/environment';
+
+const url = environment.apiUrl;
 
 describe('TaskService', () => {
 
   let service: TaskService;
-  let mockBackend: MockBackend;
+  let http: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpModule],
-      providers: [
-        TaskService,
-        {
-          provide: AuthHttp,
-          deps: [MockBackend, BaseRequestOptions],
-          useFactory: (backend: MockBackend, defaultOptions: BaseRequestOptions) => {
-            return new Http(backend, defaultOptions);
-          }
-        },
-        MockBackend,
-        BaseRequestOptions
-      ]
+      imports: [HttpClientTestingModule],
+      providers: [TaskService]
     });
     service = TestBed.get(TaskService);
-    mockBackend = TestBed.get(MockBackend);
+    http = TestBed.get(HttpTestingController);
+  });
+
+  afterEach(() => {
+    http.verify();
   });
 
   it('should be created', () => {
@@ -36,122 +30,86 @@ describe('TaskService', () => {
   });
 
   describe('getTasks', () => {
-    it('should use https', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.startsWith('https://')).toBe(true);
-      });
-      service.getTasks();
-    });
+    it('should use /tasks', async(() => {
+      service.getTasks().subscribe();
 
-    it('should use /tasks', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.endsWith('/tasks')).toBe(true);
-      });
-      service.getTasks();
-    });
+      http.expectOne(`${url}/tasks`);
+    }));
 
     it('should GET', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.method).toBe(RequestMethod.Get);
-      });
-      service.getTasks();
+      service.getTasks().subscribe();
+
+      const req = http.expectOne(`${url}/tasks`);
+      expect(req.request.method).toBe('GET');
     });
 
     it('should return a list of Tasks', () => {
-
-      const responseOptions = new ResponseOptions({
-        body: JSON.stringify({
-          data: [
-            {
-              id: 'one',
-              description: 'math hw',
-              complete: false
-            },
-            {
-              id: 'two',
-              description: 'science workbook',
-              complete: false
-            },
-            {
-              id: 'three',
-              description: 'pg 1-100',
-              complete: true
-            }
-          ]
-        })
+      service.getTasks().subscribe(tasks => {
+        expect(tasks[0]).toEqual({
+          id: 'one',
+          description: 'math hw',
+          complete: false
+        } as Task);
+        expect(tasks[1]).toEqual({
+          id: 'two',
+          description: 'science workbook',
+          complete: false
+        } as Task);
+        expect(tasks[2]).toEqual({
+          id: 'three',
+          description: 'pg 1-100',
+          complete: true
+        } as Task);
       });
 
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        connection.mockRespond(new Response(responseOptions));
-      });
-      service.getTasks()
-        .map(data => data.json())
-        .subscribe(base => {
-          expect(base.data[0]).toEqual({
+      http.expectOne(`${url}/tasks`).flush([
+          {
             id: 'one',
             description: 'math hw',
             complete: false
-          });
-          expect(base.data[1]).toEqual({
+          },
+          {
             id: 'two',
             description: 'science workbook',
             complete: false
-          });
-          expect(base.data[2]).toEqual({
+          },
+          {
             id: 'three',
             description: 'pg 1-100',
             complete: true
-          });
-        });
+          }
+      ]);
     });
   });
 
   describe('getTaskById', () => {
-    it('should use https', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.startsWith('https://')).toBe(true);
-      });
-      service.getTaskById('i-am-a-mongo-id!');
-    });
-
     it('should use /task/{id}', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.endsWith('/task/i-am-a-mongo-id!')).toBe(true);
-      });
-      service.getTaskById('i-am-a-mongo-id!');
+      service.getTaskById('i-am-a-mongo-id!').subscribe();
+
+      http.expectOne(`${url}/task/i-am-a-mongo-id!`);
     });
 
     it('should GET', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.method).toBe(RequestMethod.Get);
-      });
-      service.getTaskById('i-am-a-mongo-id!');
+      service.getTaskById('i-am-a-mongo-id!').subscribe();
+
+      const req = http.expectOne(`${url}/task/i-am-a-mongo-id!`);
+      expect(req.request.method).toBe('GET');
     });
 
     it('should return a Task', () => {
-      const responseOptions = new ResponseOptions({
-        body: JSON.stringify({
-          data: {
+      service.getTaskById('one').subscribe(task => {
+        expect(task).toEqual({
             id: 'one',
             description: 'a cool task',
             complete: true
-          }
-        })
+        } as Task);
       });
 
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        connection.mockRespond(new Response(responseOptions));
-      });
-
-      service.getTasks()
-        .map(data => data.json())
-        .subscribe(base => {
-          expect(base.data).toEqual({
-            id: 'one',
-            description: 'a cool task',
-            complete: true
-          });
-        });
+      http.expectOne(`${url}/task/one`).flush({
+          id: 'one',
+          description: 'a cool task',
+          complete: true
+      } as Task);
     });
   });
 
@@ -164,46 +122,35 @@ describe('TaskService', () => {
         complete: false
       });
     });
-    it('should use https', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.startsWith('https://')).toBe(true);
-      });
-
-      service.createTask(task);
-    });
 
     it('should use /tasks', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.endsWith('/tasks')).toBe(true);
-      });
+      service.createTask(task).subscribe();
 
-      service.createTask(task);
+      http.expectOne(`${url}/tasks`);
     });
 
     it('should post Task', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        const body = JSON.parse(connection.request.getBody());
-        expect(body).toEqual({
-          id: 'i should not be included',
-          description: 'math homework',
-          complete: false
-        });
-      });
+      service.createTask(task).subscribe();
 
-      service.createTask(task);
+      const req = http.expectOne(`${url}/tasks`);
+      expect(req.request.body).toEqual(new Task({
+        id: 'i should not be included',
+        description: 'math homework',
+        complete: false
+      }));
     });
 
     it('should POST', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.method).toBe(RequestMethod.Post);
-      });
+      service.createTask(task).subscribe();
 
-      service.createTask(task);
+      const req = http.expectOne(`${url}/tasks`);
+      expect(req.request.method).toBe('POST');
     });
   });
 
   describe('updateTask', () => {
     let task: Task;
+
     beforeEach(() => {
       task = new Task({
         id: 'i-should-be-included',
@@ -211,103 +158,68 @@ describe('TaskService', () => {
         complete: true
       });
     });
-    it('should use https', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.startsWith('https://')).toBe(true);
-      });
-
-      service.updateTaskById(task.id, task);
-    });
 
     it('should use /task/{id}', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.endsWith('/task/i-should-be-included')).toBe(true);
-      });
+      service.updateTaskById(task).subscribe();
 
-      service.updateTaskById(task.id, task);
+      http.expectOne(`${url}/task/i-should-be-included`);
     });
 
-    it('should update Task with', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        const body = JSON.parse(connection.request.getBody());
+    it('should update Task', () => {
+      service.updateTaskById(task).subscribe();
 
-        expect(body.id).toBeUndefined();
-        expect(body).toEqual({
-          description: 'science worksheet',
-          complete: true
-        });
-      });
-
-      service.updateTaskById(task.id, task);
+      const req = http.expectOne(`${url}/task/i-should-be-included`);
+      expect(req.request.body).toEqual(new Task({
+        id: 'i-should-be-included',
+        description: 'science worksheet',
+        complete: true
+      }));
     });
 
     it('should PUT', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.method).toBe(RequestMethod.Put);
-      });
+      service.updateTaskById(task).subscribe();
 
-      service.updateTaskById(task.id, task);
+      const req = http.expectOne(`${url}/task/i-should-be-included`);
+      expect(req.request.method).toBe('PUT');
     });
   });
 
   describe('patchTaskById', () => {
-    it('should use https', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.startsWith('https://')).toBe(true);
-      });
-
-      service.patchTaskById('anId', {newProp: true});
-    });
-
     it('should use /task/{id}', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.endsWith('/task/anId')).toBe(true);
-      });
+      service.patchTaskById('anId', {newProp: true}).subscribe();
 
-      service.patchTaskById('anId', {newProp: true});
+      http.expectOne(`${url}/task/anId`);
     });
 
     it('should PATCH', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.method).toBe(RequestMethod.Patch);
-      });
+      service.patchTaskById('anId', {newProp: true}).subscribe();
 
-      service.patchTaskById('anId', {newProp: true});
+      const req = http.expectOne(`${url}/task/anId`);
+      expect(req.request.method).toBe('PATCH');
     });
 
-    it('should pass object', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(JSON.parse(connection.request.getBody())).toEqual({newProp: true});
-      });
+    it('should pass new properties', () => {
+      service.patchTaskById('anId', {newProp: true}).subscribe();
 
-      service.patchTaskById('anId', {newProp: true});
+      const req = http.expectOne(`${url}/task/anId`);
+      expect(req.request.body).toEqual({
+        newProp: true
+      });
     });
   });
 
   describe('deleteTaskById', () => {
-    it('should use https', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.startsWith('https://')).toBe(true);
-      });
-
-      service.deleteTaskById('anId');
-    });
-
     it('should use /task/{id}', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.endsWith('/task/anId')).toBe(true);
-      });
+      service.deleteTaskById('anId').subscribe();
 
-      service.deleteTaskById('anId');
+      http.expectOne(`${url}/task/anId`);
     });
 
     it('should DELETE', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.method).toBe(RequestMethod.Delete);
-      });
+      service.deleteTaskById('anId').subscribe();
 
-      service.deleteTaskById('anId');
+      const req = http.expectOne(`${url}/task/anId`);
+      expect(req.request.method).toBe('DELETE');
     });
   });
-
 });

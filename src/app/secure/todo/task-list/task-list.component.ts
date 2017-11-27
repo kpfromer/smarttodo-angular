@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Task} from '../shared/task';
 import {TaskService} from '../shared/task.service';
 import * as uuid from 'uuid/v4';
-import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-task-list',
@@ -19,29 +18,27 @@ export class TaskListComponent implements OnInit {
   }
 
   getTasks() {
-    this.service.getTasks().subscribe(res => {
-      if (res.status === 200) {
-        const base = res.json();
-        this.tasks = base.data as Task[];
-      } else
-        this.error = true;
-    }, (err: HttpErrorResponse) => this.error = true);
+    this.service.getTasks().subscribe(
+      tasks => this.tasks = tasks,
+      err => this.error = true
+    );
   }
 
 
   createTask(task: {description: string, complete: boolean}) {
     const newTask = new Task({
-      id: uuid(),
+      id: uuid(), // todo: get id from backend
       description: task.description,
       complete: task.complete
     });
 
     this.tasks.push(newTask);
 
-    this.service.createTask(newTask).subscribe(res => {
-      if (res.status !== 200)
-        this.error = true;
-    }, (err: HttpErrorResponse) => this.error = true);
+    this.service.createTask(newTask).subscribe(
+      taskItem => {
+      }, // todo: get id from backend (rename)
+      err => this.error = true
+    );
   }
 
   ngOnInit() {

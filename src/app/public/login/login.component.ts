@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
     this.loginForm.get('username').setErrors({});
     this.loginForm.get('password').setErrors({});
 
-    this.loginService.login(username, password).then(isLoggedIn => {
+    this.loginService.login(username, password).subscribe(isLoggedIn => {
       if (isLoggedIn) {
         this.notValidUser = false;
         this.router.navigateByUrl('/todo');

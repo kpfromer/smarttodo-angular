@@ -1,43 +1,46 @@
 import {Injectable} from '@angular/core';
-import {AuthHttp} from 'angular2-jwt';
 import {environment} from '../../../../environments/environment';
 import {Task} from './task';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs/Observable';
 
 const url = environment.apiUrl;
 
 @Injectable()
 export class TaskService {
 
-  constructor(private http: AuthHttp) {
+  constructor(private http: HttpClient) {
   }
 
   // todo: test for returns
   // todo: test for edge cases
   // todo: add edge case handling
 
-  getTasks() {
-    return this.http.get(`https://${url}/tasks`);
+  getTasks(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${url}/tasks`);
   }
 
-  getTaskById(id: string) {
-    return this.http.get(`https://${url}/task/${id}`);
+  getTaskById(id: string): Observable<Task> {
+    return this.http.get<Task>(`${url}/task/${id}`);
   }
 
-  createTask(task: Task) {
-    return this.http.post(`https://${url}/tasks`, JSON.stringify(task));
+  createTask(task: Task): Observable<Task> {
+    return this.http.post<Task>(`${url}/tasks`, task);
   }
 
-  updateTaskById(id: string, task: Task) {
-    delete task.id;
-    return this.http.put(`https://${url}/task/${id}`, JSON.stringify(task));
+  updateTaskById(task: Task): Observable<Task> {
+    return this.http.put<Task>(`${url}/task/${task.id}`, task);
   }
 
-  patchTaskById(id: string, properties) {
-    return this.http.patch(`https://${url}/task/${id}`, JSON.stringify(properties));
+  patchTaskById(id: string, properties): Observable<Task> { // todo: remove?
+    return this.http.patch<Task>(`${url}/task/${id}`, properties);
   }
 
   deleteTaskById(id: string) {
-    return this.http.delete(`https://${url}/task/${id}`);
+    return this.http.delete(`${url}/task/${id}`);
   }
+
+  private handleError() {
+  } // todo
 
 }

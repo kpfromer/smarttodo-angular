@@ -82,12 +82,6 @@ describe('InlineEditorComponent', () => {
           fixture.detectChanges();
         });
 
-        it('should have focus directive applied', () => {
-          component.startEditing();
-          const inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
-          expect(inputElement.getAttribute('focus')).toBe('true');
-        });
-
         it('should have a type', () => {
           const inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
           expect(inputElement.getAttribute('type')).toBe('text');

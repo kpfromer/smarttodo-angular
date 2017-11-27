@@ -6,6 +6,7 @@ import {AuthService} from '../../shared/auth.service';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
+import {Observable} from 'rxjs/Observable';
 import createSpy = jasmine.createSpy;
 
 describe('LoginComponent', () => {
@@ -71,7 +72,7 @@ describe('LoginComponent', () => {
     });
 
     it('should login the user', fakeAsync(() => {
-      spyOn(loginService, 'login').and.returnValue(Promise.resolve(true));
+      spyOn(loginService, 'login').and.returnValue(Observable.of(true));
 
       component.loginForm.setValue({username: 'test', password: 'testPassword'});
 
@@ -82,7 +83,7 @@ describe('LoginComponent', () => {
     }));
 
     it('should redirect logged in user to /todo', fakeAsync(() => {
-      spyOn(loginService, 'login').and.returnValue(Promise.resolve(true));
+      spyOn(loginService, 'login').and.returnValue(Observable.of(true));
 
       component.loginForm.setValue({username: 'test', password: 'testPassword'});
 
@@ -93,7 +94,7 @@ describe('LoginComponent', () => {
     }));
 
     it('should display username/password flashmessage user did not successfully login', fakeAsync(() => {
-      spyOn(loginService, 'login').and.returnValue(Promise.resolve(false));
+      spyOn(loginService, 'login').and.returnValue(Observable.of(false));
 
       expect(component.notValidUser).toBe(false);
 
@@ -106,7 +107,7 @@ describe('LoginComponent', () => {
     }));
 
     it('should reset the form', fakeAsync(() => {
-      spyOn(loginService, 'login').and.returnValue(Promise.resolve(false));
+      spyOn(loginService, 'login').and.returnValue(Observable.of(false));
       spyOn(component.loginForm, 'reset');
 
       spyOn(component.loginForm.get('username'), 'setErrors');

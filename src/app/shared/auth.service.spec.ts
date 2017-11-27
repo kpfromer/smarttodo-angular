@@ -1,28 +1,30 @@
 import {TestBed} from '@angular/core/testing';
 import {AuthService} from './auth.service';
-import {MockBackend, MockConnection} from '@angular/http/testing';
-import {BaseRequestOptions, Http, HttpModule, RequestMethod, Response, ResponseOptions} from '@angular/http';
 import 'rxjs/add/observable/of';
-import * as _ from 'lodash';
+import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {environment} from '../../environments/environment';
+
+const url = environment.apiUrl;
+
+class MockJwtService {
+  isTokenExpired() {
+  }
+
+  tokenGetter() {
+  }
+}
 
 describe('AuthService', () => {
 
-  let authService;
+  let authService: AuthService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpModule],
+      imports: [HttpClientTestingModule],
       providers: [
-        {
-          provide: Http,
-          deps: [MockBackend, BaseRequestOptions],
-          useFactory: (backend: MockBackend, defaultOptions: BaseRequestOptions) => {
-            return new Http(backend, defaultOptions);
-          }
-        },
-        MockBackend,
-        BaseRequestOptions,
-        AuthService
+        AuthService,
+        {provide: JwtHelperService, useClass: MockJwtService}
       ]
     });
     authService = TestBed.get(AuthService);
@@ -36,95 +38,72 @@ describe('AuthService', () => {
 
     let validResponse;
 
-    let mockBackend;
+    let http: HttpTestingController;
 
     beforeEach(() => {
-      validResponse = new Response(new ResponseOptions({
-        body: JSON.stringify({
-          data: {
-            id_token: 'i am a token!'
-          }
-        })
-      }));
+      validResponse = {
+        authHeader: 'i am a token!'
+      };
 
-      mockBackend = TestBed.get(MockBackend);
-      spyOn(localStorage, 'setItem').and.returnValue(undefined);
+      http = TestBed.get(HttpTestingController);
+      spyOn(localStorage, 'setItem');
+    });
+
+    afterEach(() => {
+      http.verify();
     });
 
     it('should use /authenticate', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.endsWith('/authenticate')).toBe(true);
-        connection.mockRespond(validResponse);
-      });
       authService.login('admin', 'secret');
+
+      http.expectOne(`${url}/authenticate`).flush(validResponse);
     });
 
     it('should post', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.method).toBe(RequestMethod.Post);
-        connection.mockRespond(validResponse);
-      });
       authService.login('admin', 'secret');
+
+      const req = http.expectOne(`${url}/authenticate`);
+      expect(req.request.method).toBe('POST');
     });
 
-    it('should set id_token', (done) => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        connection.mockRespond(validResponse);
-      });
-      authService.login('admin', 'secret').then(value => {
+    it('should set id_token', () => {
+      authService.login('admin', 'secret').subscribe(() => {
         expect(localStorage.setItem).toHaveBeenCalledWith('id_token', 'i am a token!');
-        done();
       });
+
+      http.expectOne(`${url}/authenticate`).flush(validResponse);
     });
 
-    it('should use only https', () => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        expect(connection.request.url.startsWith('https://')).toBe(true);
-        connection.mockRespond(validResponse);
-      });
-      authService.login('admin', 'secret');
-    });
-
-    it('should return true when successful', (done) => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        connection.mockRespond(validResponse);
-      });
-      authService.login('admin', 'secret').then(value => {
+    it('should return true when successful', () => {
+      authService.login('admin', 'secret').subscribe(value => {
         expect(value).toBe(true);
-        done();
+      });
+
+      http.expectOne(`${url}/authenticate`).flush(validResponse);
+    });
+
+    it('should return false when username/password are not found', () => {
+      authService.login('admin', 'secret').subscribe(value => {
+        expect(value).toBe(false);
+      });
+
+      http.expectOne(`${url}/authenticate`).flush({
+        statusCode: 400,
+        error: 'Bad Request',
+        message: 'Invalid Email or Password.'
+      }, {
+        status: 400,
+        statusText: 'Invalid Email or Password.'
       });
     });
 
-    it('should return false when username/password are not found', (done) => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        connection.mockRespond(new Response(new ResponseOptions({
-          body: JSON.stringify({
-            error: {
-              code: 404,
-              message: 'Username/Password not found',
-            }
-          })
-        })));
-      });
-      authService.login('admin', 'secret').then(value => {
+    it('should return false when there is no token found', () => {
+      authService.login('admin', 'secret').subscribe(value => {
         expect(value).toBe(false);
-        done();
-      });
-    });
-
-    it('should return false when there is no token found', (done) => {
-      mockBackend.connections.subscribe((connection: MockConnection) => {
-        connection.mockRespond(new Response(new ResponseOptions({
-          body: JSON.stringify({})
-        })));
-      });
-      spyOn(_, 'get');
-      authService.login('admin', 'secret').then(value => {
-        expect(value).toBe(false);
-        expect(_.get).toHaveBeenCalledWith({}, 'data.id_token');
         expect(localStorage.setItem).not.toHaveBeenCalled();
-        done();
       });
+
+      http.expectOne(`${url}/authenticate`).flush({});
     });
   });
 
@@ -133,6 +112,38 @@ describe('AuthService', () => {
       spyOn(localStorage, 'removeItem');
       authService.logout();
       expect(localStorage.removeItem).toHaveBeenCalledWith('id_token');
+    });
+  });
+
+  describe('loggedIn', () => {
+    let service: JwtHelperService;
+
+    beforeEach(() => {
+      service = TestBed.get(JwtHelperService);
+    });
+
+    it('should return false when no token is found', () => {
+      spyOn(service, 'tokenGetter').and.returnValue(undefined);
+
+      const loggedIn = authService.loggedIn();
+
+      expect(loggedIn).toBe(false);
+    });
+    it('should return false when the token is expired', () => {
+      spyOn(service, 'tokenGetter').and.returnValue('I am expired!');
+      spyOn(service, 'isTokenExpired').and.returnValue(true);
+
+      const loggedIn = authService.loggedIn();
+
+      expect(loggedIn).toBe(false);
+    });
+    it('should return true when the token is valid', () => {
+      spyOn(service, 'tokenGetter').and.returnValue('I am not expired!');
+      spyOn(service, 'isTokenExpired').and.returnValue(false);
+
+      const loggedIn = authService.loggedIn();
+
+      expect(loggedIn).toBe(true);
     });
   });
 });
