@@ -1,4 +1,4 @@
 <input #inlineEditControl *ngIf="editing" (keyup.enter)="doneEditing()" (keyup.esc)="cancelEditing()"
-       [(ngModel)]="value" [type]="type" focus="true" class="inline-input" [required]="required">
+       [(ngModel)]="value" [type]="type" class="inline-input" [required]="required">
 <label title="Click to Edit" *ngIf="!editing" (click)="startEditing()" (focus)="startEditing()" tabindex="0"
        class="inline-text" [for]="forId">{{value}}</label>
