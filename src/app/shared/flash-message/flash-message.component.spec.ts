@@ -2,17 +2,19 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {FlashMessageComponent} from './flash-message.component';
 import {By} from '@angular/platform-browser';
-import {Component} from '@angular/core';
+import {Component, DebugElement} from '@angular/core';
+import {MatIconModule} from '@angular/material';
 
 
 @Component({
   template: `
-  <app-flash-message [status]="status">{{message}}</app-flash-message>
+    <app-flash-message [color]="color" [icon]="icon">{{message}}</app-flash-message>
   `
 })
 class MockHostComponent {
-  status: string;
+  color: string;
   message: string;
+  icon: string | null;
 }
 
 describe('FlashMessageComponent', () => {
@@ -21,6 +23,7 @@ describe('FlashMessageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [MatIconModule],
       declarations: [ MockHostComponent, FlashMessageComponent ]
     })
     .compileComponents();
@@ -31,7 +34,8 @@ describe('FlashMessageComponent', () => {
     hostComponent = fixture.componentInstance;
 
     hostComponent.message = 'Error: Something bad!';
-    hostComponent.status = 'red';
+    hostComponent.color = 'accent';
+    hostComponent.icon = 'label';
 
     fixture.detectChanges();
   });
@@ -40,13 +44,42 @@ describe('FlashMessageComponent', () => {
     expect(hostComponent).toBeTruthy();
   });
 
-  it('should display message', () => {
-    const paragraphElement = fixture.debugElement.query(By.css('p'));
-    expect(paragraphElement.nativeElement.textContent).toBe('Error: Something bad!');
+  describe('text', () => {
+    let textElement: DebugElement;
+    beforeEach(() => {
+      textElement = fixture.debugElement.query(By.css('span'));
+    });
+
+    it('should display message', () => {
+      expect(textElement.nativeElement.textContent).toBe('Error: Something bad!');
+    });
+
+    it('should use color', () => {
+      expect(textElement.classes.accent).toBe(true);
+    });
   });
 
-  it('should display status color', () => {
-    const paragraphElement = fixture.debugElement.query(By.css('#card-alert'));
-    expect(paragraphElement.classes.red).toBe(true);
+  describe('icon', () => {
+    let iconElement: DebugElement;
+    beforeEach(() => {
+      iconElement = fixture.debugElement.query(By.css('mat-icon'));
+    });
+
+    it('should display a custom icon', () => {
+      expect(iconElement.nativeElement.textContent).toBe('label');
+    });
+
+    it('should not display an icon', () => {
+      hostComponent.icon = null;
+      fixture.detectChanges();
+      iconElement = fixture.debugElement.query(By.css('mat-icon'));
+
+      expect(iconElement).toBe(null);
+    });
+
+    it('should use color', () => {
+      // ng-reflect-color gets the color attribute of the icon
+      expect(iconElement.nativeElement.getAttribute('ng-reflect-color')).toBe('accent');
+    });
   });
 });
