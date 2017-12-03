@@ -1,0 +1,19 @@
+@import '~@angular/material/_theming';
+
+@include mat-core();
+
+// Light Theme
+$todo-app-primary: mat-palette($mat-indigo);
+$todo-app-accent: mat-palette($mat-pink, A200, A100, A400);
+
+$todo-app-warn: mat-palette($mat-red);
+
+$todo-app-theme: mat-light-theme($todo-app-primary, $todo-app-accent, $todo-app-warn);
+
+// Dark Theme
+$dark-primary: mat-palette($mat-cyan, 400);
+$dark-accent: mat-palette($mat-light-blue, A200, A100, A400);
+
+$dark-warn: mat-palette($mat-red);
+
+$dark-theme: mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
