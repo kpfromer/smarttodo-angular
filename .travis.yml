@@ -16,6 +16,9 @@ cache:
   directories:
       - node_modules
 
+env:
+  - API_URL=http://testurl
+
 before_install:
   - export CHROME_BIN=/usr/bin/google-chrome
   - export DISPLAY=:99.0
@@ -28,6 +31,7 @@ install:
 script:
   - npm test
   - npm run e2e
+  - npm run build:prod
 
 notifications:
   webhooks:
