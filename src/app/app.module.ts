@@ -9,6 +9,10 @@ import {JwtModule} from '@auth0/angular-jwt';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {DefaultInterceptor} from './shared/default.interceptor';
 
+export function tokenGetter() {
+  return localStorage.getItem('id_token');
+}
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -19,9 +23,7 @@ import {DefaultInterceptor} from './shared/default.interceptor';
     HttpClientModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: () => {
-          return localStorage.getItem('id_token');
-        }
+        tokenGetter: tokenGetter
       }
     }),
     AppRoutingModule
