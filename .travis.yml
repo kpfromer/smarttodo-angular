@@ -12,10 +12,6 @@ addons:
     packages:
     - google-chrome-stable
 
-cache:
-  directories:
-      - node_modules
-
 before_install:
   - export CHROME_BIN=/usr/bin/google-chrome
   - export DISPLAY=:99.0
