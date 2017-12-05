@@ -8,6 +8,9 @@ import {AuthService} from './shared/auth.service';
 import {JwtModule} from '@auth0/angular-jwt';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {DefaultInterceptor} from './shared/default.interceptor';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatButtonModule, MatIconModule, MatMenuModule, MatSidenavModule, MatSnackBarModule, MatToolbarModule} from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 export function tokenGetter() {
   return localStorage.getItem('id_token');
@@ -20,6 +23,14 @@ export function tokenGetter() {
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    FlexLayoutModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatMenuModule,
+    MatSnackBarModule,
     HttpClientModule,
     JwtModule.forRoot({
       config: {
