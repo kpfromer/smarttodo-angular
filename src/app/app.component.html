@@ -8,7 +8,7 @@
 
     <span class="app-toolbar-spacer"></span>
 
-    <button mat-button routerLink="/login"> <!-- TODO: Show if not logged in -->
+    <button mat-button id="login-button" routerLink="/login" *ngIf="!authSerivce.loggedIn()">
       Login
     </button>
 
