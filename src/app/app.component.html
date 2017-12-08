@@ -14,8 +14,8 @@
 
     <mat-menu #appMenu="matMenu">
       <!-- TODO: flesh out -->
-      <button mat-menu-item (click)="isDark = !isDark">Toggle Theme</button>
-      <button mat-menu-item (click)="logout()">Logout</button> <!-- TODO: show if logged in -->
+      <button mat-menu-item id="theme-toggle" (click)="isDark = !isDark">Toggle Theme</button>
+      <button mat-menu-item id="logout-button" (click)="logout()" *ngIf="authSerivce.loggedIn()">Logout</button>
       <button mat-menu-item>Settings</button>
       <button mat-menu-item>Help</button>
     </mat-menu>
