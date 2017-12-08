@@ -4,7 +4,15 @@ import {AppComponent} from './app.component';
 import {RouterTestingModule} from '@angular/router/testing';
 import {By} from '@angular/platform-browser';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import {MatButtonModule, MatIconModule, MatMenuModule, MatSidenavModule, MatSnackBar, MatToolbarModule} from '@angular/material';
+import {
+  MatButtonModule,
+  MatIconModule,
+  MatMenuModule,
+  MatMenuTrigger,
+  MatSidenavModule,
+  MatSnackBar,
+  MatToolbarModule
+} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {AuthService} from './shared/auth.service';
@@ -109,6 +117,60 @@ describe('AppComponent', () => {
       overlayContainer.ngOnDestroy();
     });
   });
+
+  describe('menu', () => {
+
+    beforeEach(() => {
+      const menuTriggerElement = fixture.debugElement.query(By.directive(MatMenuTrigger));
+      menuTriggerElement.nativeElement.click();
+      fixture.detectChanges();
+    });
+
+    it('should have a button that toggles the theme', () => {
+      const toggleElement = fixture.debugElement.query(By.css('#theme-toggle'));
+
+      toggleElement.nativeElement.click();
+
+      expect(toggleElement).toBeTruthy();
+      expect(component.isDark).toBe(true);
+    });
+
+    describe('logout button', () => {
+      let logoutElement: DebugElement;
+      let loggedIn: boolean;
+
+      beforeEach(() => {
+        spyOn(component.authSerivce, 'loggedIn').and.callFake(() => loggedIn);
+        loggedIn = true;
+
+        fixture.detectChanges();
+
+        logoutElement = fixture.debugElement.query(By.css('#logout-button'));
+      });
+
+      it('should logout', () => {
+        spyOn(component, 'logout');
+
+        logoutElement.nativeElement.click();
+
+        expect(component.logout).toHaveBeenCalled();
+      });
+
+      it('should be shown if user is logged in', () => {
+        expect(logoutElement).toBeTruthy();
+      });
+
+      it('should not be shown if user is not logged in', () => {
+        loggedIn = false;
+        fixture.detectChanges();
+
+        logoutElement = fixture.debugElement.query(By.css('#logout-button'));
+
+        expect(logoutElement).toBeFalsy();
+      });
+    });
+  });
+
 
   describe('login button', () => {
     let loginButton: DebugElement;
