@@ -103,6 +103,10 @@ describe('AppComponent', () => {
 
       expect(overlayContainer.getContainerElement().classList.contains('dark-theme')).toBe(false);
     });
+
+    afterEach(() => {
+      overlayContainer.ngOnDestroy();
+    });
   });
 
   describe('logout', () => {
