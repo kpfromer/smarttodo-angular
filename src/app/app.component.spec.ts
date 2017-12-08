@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, inject, TestBed, tick} from '@angular/core/testing';
 
 import {AppComponent} from './app.component';
 import {RouterTestingModule} from '@angular/router/testing';
@@ -9,9 +9,10 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {AuthService} from './shared/auth.service';
 import {Router} from '@angular/router';
-import {Component} from '@angular/core';
+import {Component, DebugElement} from '@angular/core';
 import {of} from 'rxjs/observable/of';
 import {Subject} from 'rxjs/Subject';
+import {Location} from '@angular/common';
 
 @Component({
   template: ''
@@ -107,6 +108,42 @@ describe('AppComponent', () => {
     afterEach(() => {
       overlayContainer.ngOnDestroy();
     });
+  });
+
+  describe('login button', () => {
+    let loginButton: DebugElement;
+    let loggedIn: boolean;
+
+    beforeEach(() => {
+      spyOn(component.authSerivce, 'loggedIn').and.callFake(() => loggedIn);
+      loggedIn = false;
+
+      fixture.detectChanges();
+
+      loginButton = fixture.debugElement.query(By.css('#login-button'));
+    });
+
+    it('should be shown if the user is not logged in', () => {
+      expect(loginButton).toBeTruthy();
+    });
+
+    it('should not be shown if the user is logged in', () => {
+      loggedIn = true;
+      fixture.detectChanges();
+
+      loginButton = fixture.debugElement.query(By.css('#login-button'));
+
+      expect(loginButton).toBeFalsy();
+    });
+
+    it('should redirect users to /login', inject([Location], (location: Location) => {
+      loginButton.nativeElement.click();
+      fixture.detectChanges();
+
+      fixture.whenStable().then(() => {
+        expect(location.path()).toBe('/login');
+      });
+    }));
   });
 
   describe('logout', () => {
