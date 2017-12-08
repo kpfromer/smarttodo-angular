@@ -15,7 +15,7 @@
     <mat-menu #appMenu="matMenu">
       <!-- TODO: flesh out -->
       <button mat-menu-item (click)="isDark = !isDark">Toggle Theme</button>
-      <button mat-menu-item>Logout</button> <!-- TODO: make logout work and show on if logged in -->
+      <button mat-menu-item (click)="logout()">Logout</button> <!-- TODO: show if logged in -->
       <button mat-menu-item>Settings</button>
       <button mat-menu-item>Help</button>
     </mat-menu>
