@@ -112,7 +112,7 @@ describe('LoginComponent', () => {
 
     it('should reset the form', fakeAsync(() => {
       spyOn(loginService, 'login').and.returnValue(Observable.of(false));
-      spyOn(component.loginForm, 'reset');
+      spyOn(component.loginForm.get('password'), 'reset');
 
       spyOn(component.loginForm.get('username'), 'setErrors');
       spyOn(component.loginForm.get('password'), 'setErrors');
@@ -122,9 +122,9 @@ describe('LoginComponent', () => {
       component.login();
       tick();
 
-      expect(component.loginForm.reset).toHaveBeenCalled();
-      expect(component.loginForm.get('username').setErrors).toHaveBeenCalledWith({});
-      expect(component.loginForm.get('password').setErrors).toHaveBeenCalledWith({});
+      expect(component.loginForm.get('password').reset).toHaveBeenCalled();
+      expect(component.loginForm.get('username').setErrors).toHaveBeenCalledWith(null);
+      expect(component.loginForm.get('password').setErrors).toHaveBeenCalledWith({required: true});
     }));
 
     it('should be triggered on submit button click with correct values', () => {
