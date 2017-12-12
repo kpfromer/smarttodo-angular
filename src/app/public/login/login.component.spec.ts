@@ -9,6 +9,18 @@ import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import createSpy = jasmine.createSpy;
 
+@Directive({
+  selector: 'app-flash-message'
+})
+class MockFlashMessage {
+}
+
+class MockAuthService {
+  login(username: string, password: string) {
+    return;
+  }
+}
+
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -17,19 +29,11 @@ describe('LoginComponent', () => {
     navigateByUrl: createSpy('navigateByUrl')
   };
 
+  const mockSnackbar = {
+    open: createSpy('open')
+  };
+
   beforeEach(async(() => {
-
-    @Directive({
-      selector: 'app-flash-message'
-    })
-    class MockFlashMessage {
-    }
-
-    class MockAuthService {
-      login(username: string, password: string) {
-        return;
-      }
-    }
 
     TestBed.configureTestingModule({
       imports: [
@@ -160,11 +164,12 @@ describe('LoginComponent', () => {
   describe('view', () => {
 
     describe('flashmessage', () => {
+      const getFlashmessage = () => fixture.debugElement.query(By.css('app-flash-message'));
       it('should be displayed when user\'s credentials is valid', () => {
         component.notValidUser = false;
         fixture.detectChanges();
 
-        const flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+        const flashmessage = getFlashmessage();
         expect(flashmessage).toBeNull();
       });
 
@@ -172,7 +177,7 @@ describe('LoginComponent', () => {
         component.notValidUser = true;
         fixture.detectChanges();
 
-        const flashmessage = fixture.debugElement.query(By.css('app-flash-message'));
+        const flashmessage = getFlashmessage();
         expect(flashmessage).toBeTruthy();
       });
 
@@ -181,6 +186,10 @@ describe('LoginComponent', () => {
     describe('validation messages', () => {
 
       describe('username', () => {
+
+        const getUsername = () => fixture.debugElement.query(By.css('#usernameContainer'));
+        const getUsernameError = () => getUsername().query(By.css('.error'));
+
         let usernameInput;
         beforeEach(() => {
           usernameInput = component.loginForm.get('username');
@@ -192,8 +201,7 @@ describe('LoginComponent', () => {
           usernameInput.markAsTouched();
           fixture.detectChanges();
 
-          const errorElement = fixture.debugElement.query(By.css('#usernameContainer'))
-            .query(By.css('.error'));
+          const errorElement = getUsernameError();
 
           expect(errorElement).toBeNull();
         });
@@ -204,8 +212,7 @@ describe('LoginComponent', () => {
           usernameInput.markAsTouched();
           fixture.detectChanges();
 
-          const errorElement = fixture.debugElement.query(By.css('#usernameContainer'))
-            .query(By.css('.error'));
+          const errorElement = getUsernameError();
 
           expect(errorElement).toBeTruthy();
           expect(errorElement.nativeElement.textContent.includes('Username is required')).toBe(true);
@@ -248,12 +255,15 @@ describe('LoginComponent', () => {
     describe('input', () => {
 
       describe('username', () => {
+
+        const getUsername = () => fixture.debugElement.query(By.css('input[name=username]'));
+
         it('should not be valid when user has not interacted with it', () => {
           component.loginForm.patchValue({username: null});
           component.loginForm.get('username').markAsPristine();
           fixture.detectChanges();
 
-          const usernameInputElement = fixture.debugElement.query(By.css('input[name=username]'));
+          const usernameInputElement = getUsername();
 
           expect(usernameInputElement.classes.valid).toBe(false);
         });
@@ -263,7 +273,7 @@ describe('LoginComponent', () => {
           component.loginForm.get('username').markAsDirty();
           fixture.detectChanges();
 
-          const usernameInputElement = fixture.debugElement.query(By.css('input[name=username]'));
+          const usernameInputElement = getUsername();
 
           expect(usernameInputElement.classes.valid).toBe(true);
         });
@@ -273,7 +283,7 @@ describe('LoginComponent', () => {
           component.loginForm.get('username').markAsDirty();
           fixture.detectChanges();
 
-          const usernameInputElement = fixture.debugElement.query(By.css('input[name=username]'));
+          const usernameInputElement = getUsername();
 
           expect(usernameInputElement.classes.error).toBe(false);
         });
@@ -283,7 +293,7 @@ describe('LoginComponent', () => {
           component.loginForm.get('username').markAsDirty();
           fixture.detectChanges();
 
-          const usernameInputElement = fixture.debugElement.query(By.css('input[name=username]'));
+          const usernameInputElement = getUsername();
 
           expect(usernameInputElement.classes.error).toBe(true);
         });
@@ -293,7 +303,7 @@ describe('LoginComponent', () => {
           component.loginForm.get('username').markAsPristine();
           fixture.detectChanges();
 
-          const usernameInputElement = fixture.debugElement.query(By.css('input[name=username]'));
+          const usernameInputElement = getUsername();
 
           expect(usernameInputElement.classes.error).toBe(false);
         });
