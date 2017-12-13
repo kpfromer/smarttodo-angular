@@ -1,4 +1,4 @@
-import { AppPage } from './app.po';
+import {AppPage} from './app.po';
 
 describe('smarttodo-angular App', () => {
   let page: AppPage;
@@ -7,8 +7,8 @@ describe('smarttodo-angular App', () => {
     page = new AppPage();
   });
 
-  it('should display welcome message', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('Welcome to app!');
-  });
+  // it('should display welcome message', () => {
+  //   page.navigateTo();
+  //   expect(page.getParagraphText()).toEqual('Welcome to app!');
+  // });
 });
