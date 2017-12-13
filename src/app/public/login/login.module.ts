@@ -4,7 +4,7 @@ import {LoginComponent} from './login.component';
 import {LoginRoutingModule} from './login.routing';
 import {FlashMessageModule} from '../../shared/flash-message/flash-message.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatButtonModule, MatInputModule} from '@angular/material';
+import {MatButtonModule, MatInputModule, MatSnackBarModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -12,6 +12,7 @@ import {MatButtonModule, MatInputModule} from '@angular/material';
     FormsModule,
     ReactiveFormsModule,
     FlashMessageModule,
+    MatSnackBarModule,
     MatInputModule,
     MatButtonModule,
     LoginRoutingModule

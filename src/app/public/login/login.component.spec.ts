@@ -7,7 +7,7 @@ import {By} from '@angular/platform-browser';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-import {MatButtonModule, MatInputModule, MatSnackBar} from '@angular/material';
+import {MatButtonModule, MatInputModule, MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import createSpy = jasmine.createSpy;
 
@@ -256,6 +256,29 @@ describe('LoginComponent', () => {
           expect(errorElement).toBeTruthy();
           expect(errorElement.nativeElement.textContent.includes('Password is required')).toBe(true);
         });
+      });
+    });
+
+    describe('openSnackBar', () => {
+      let snackbar: MatSnackBar;
+
+      beforeEach(() => {
+        snackbar = TestBed.get(MatSnackBar);
+      });
+
+      it('should create a snackbar with custom message, action and time of 3500ms', () => {
+        component.openSnackBar('Message', 'ACTION');
+
+        expect(snackbar.open).toHaveBeenCalledWith('Message', 'ACTION', {
+          duration: 3500
+        });
+      });
+
+      it('should return a snackbar', () => {
+        mockSnackbar.open.and.returnValue({} as MatSnackBarRef<SimpleSnackBar>);
+        const snackbarItem = component.openSnackBar('Message', 'ACTION');
+
+        expect(snackbarItem).toBeTruthy();
       });
     });
   });

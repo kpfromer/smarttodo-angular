@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../shared/auth.service';
 import {Router} from '@angular/router';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,16 @@ export class LoginComponent implements OnInit {
 
   notValidUser = false;
 
-  constructor(private loginService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+  constructor(private loginService: AuthService,
+              private router: Router,
+              private formBuilder: FormBuilder,
+              private snackBar: MatSnackBar) {
+  }
+
+  openSnackBar(message: string, action: string) {
+    return this.snackBar.open(message, action, {
+      duration: 3500,
+    });
   }
 
   login() {
