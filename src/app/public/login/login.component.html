@@ -1,72 +1,29 @@
-<div id="login-page" class="row">
-  <div class="col s12 z-depth-4 card-panel">
-    <form id="login" class="login-form" [formGroup]="loginForm"
-          (submit)="loginForm.valid && login()" #lgForm="ngForm"
-          novalidate>
-      <div class="row">
-        <div class="input-field col s12 center">
-          <img src="assets/images/login-logo.png" alt=""
-               class="circle responsive-img valign profile-image-login"/>
-          <p class="center login-form-text">Smart Todo Login</p>
-        </div>
-      </div>
+<app-flash-message *ngIf="notValidUser">
+  Wrong username or password.
+</app-flash-message>
+<form id="login" class="login-form" [formGroup]="loginForm"
+      (submit)="loginForm.valid && login()" #lgForm="ngForm"
+      novalidate>
 
-      <app-flash-message *ngIf="notValidUser"
-                         status="red">Username/Password were not found
-      </app-flash-message>
+  <mat-form-field id="usernameContainer">
+    <input matInput type="text" placeholder="Username" formControlName="username"
+           required>
+    <mat-error #usernameRequired *ngIf="loginForm.get('username').hasError('required')">
+      Username is required
+    </mat-error>
+  </mat-form-field>
 
-      <div id="usernameContainer" class="row margin">
-        <div class="input-field col s12">
-          <i class="mdi-social-person-outline prefix"></i>
-          <input id="username" type="text" name="username" formControlName="username"
-                 [ngClass]="{'valid': loginForm.get('username').valid && loginForm.get('username').dirty,
-                 'error': loginForm.get('username').invalid && loginForm.get('username').dirty}"/>
-          <label for="username" class="center-align">Username</label>
-          <div>
-            <div class="error"
-                 *ngIf="(lgForm.submitted || loginForm.get('username').touched) && loginForm.get('username').errors">
-              <div *ngIf="loginForm.get('username').hasError('required')">Username is required</div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <br>
 
-      <div id="passwordContainer" class="row margin">
-        <div class="input-field col s12">
-          <i class="mdi-action-lock-outline prefix"></i>
-          <input id="password" type="password" name="password" formControlName="password"
-                 [ngClass]="{'valid': loginForm.get('password').valid && loginForm.get('password').dirty,
-                 'error': loginForm.get('password').invalid && loginForm.get('password').dirty}"/>
-          <label for="password">Password</label>
-          <div>
-            <div class="error"
-                 *ngIf="(lgForm.submitted || loginForm.get('password').touched) && loginForm.get('password').errors">
-              <div *ngIf="loginForm.get('password').hasError('required')">Password is required</div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <mat-form-field id="passwordContainer">
+    <input matInput type="password" placeholder="Password" formControlName="password"
+           required>
+    <mat-error *ngIf="loginForm.get('password').hasError('required')">
+      Password is required
+    </mat-error>
+  </mat-form-field>
 
-      <!--<div class="row">          todo: use-->
-      <!--<div class="input-field col s12 m12 l12  login-text">-->
-      <!--<input type="checkbox" id="remember-me" />-->
-      <!--<label for="remember-me">Remember me</label>-->
-      <!--</div>-->
-      <!--</div>-->
-      <div class="row">
-        <div class="input-field col s12">
-          <button type="submit" class="btn waves-effect waves-light col s12">Login</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s6 m6 l6">
-          <p class="margin medium-small"><a routerLink="/register">Register Now!</a></p>
-        </div>
-        <!--<div class="input-field col s6 m6 l6"> todo: use!-->
-        <!--<p class="margin right-align medium-small"><a th:href="@{/forgotPassword}">Forgot password?</a></p>-->
-        <!--</div>-->
-      </div>
+  <br>
 
-    </form>
-  </div>
-</div>
+  <button mat-raised-button type="submit">Login</button>
+</form>
