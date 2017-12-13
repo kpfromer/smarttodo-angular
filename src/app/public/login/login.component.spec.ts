@@ -7,6 +7,8 @@ import {By} from '@angular/platform-browser';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
+import {MatButtonModule, MatInputModule, MatSnackBar} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import createSpy = jasmine.createSpy;
 
 @Directive({
@@ -38,19 +40,22 @@ describe('LoginComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MatInputModule,
+        MatButtonModule
       ],
       providers: [
         FormBuilder,
         {provide: Router, useValue: mockRouter},
-        {provide: AuthService, useClass: MockAuthService}
+        {provide: AuthService, useClass: MockAuthService},
+        {provide: MatSnackBar, useValue: mockSnackbar}
       ],
       declarations: [
         LoginComponent,
         MockFlashMessage
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -188,7 +193,7 @@ describe('LoginComponent', () => {
       describe('username', () => {
 
         const getUsername = () => fixture.debugElement.query(By.css('#usernameContainer'));
-        const getUsernameError = () => getUsername().query(By.css('.error'));
+        const getUsernameError = () => getUsername().query(By.css('mat-error'));
 
         let usernameInput;
         beforeEach(() => {
@@ -220,6 +225,10 @@ describe('LoginComponent', () => {
       });
 
       describe('password', () => {
+
+        const getPassword = () => fixture.debugElement.query(By.css('#passwordContainer'));
+        const getPasswordError = () => getPassword().query(By.css('mat-error'));
+
         let passwordInput;
         beforeEach(() => {
           passwordInput = component.loginForm.get('password');
@@ -231,8 +240,7 @@ describe('LoginComponent', () => {
           passwordInput.markAsTouched();
           fixture.detectChanges();
 
-          const errorElement = fixture.debugElement.query(By.css('#passwordContainer'))
-            .query(By.css('.error'));
+          const errorElement = getPasswordError();
 
           expect(errorElement).toBeNull();
         });
@@ -243,121 +251,10 @@ describe('LoginComponent', () => {
           passwordInput.markAsTouched();
           fixture.detectChanges();
 
-          const errorElement = fixture.debugElement.query(By.css('#passwordContainer'))
-            .query(By.css('.error'));
+          const errorElement = getPasswordError();
 
           expect(errorElement).toBeTruthy();
           expect(errorElement.nativeElement.textContent.includes('Password is required')).toBe(true);
-        });
-      });
-    });
-
-    describe('input', () => {
-
-      describe('username', () => {
-
-        const getUsername = () => fixture.debugElement.query(By.css('input[name=username]'));
-
-        it('should not be valid when user has not interacted with it', () => {
-          component.loginForm.patchValue({username: null});
-          component.loginForm.get('username').markAsPristine();
-          fixture.detectChanges();
-
-          const usernameInputElement = getUsername();
-
-          expect(usernameInputElement.classes.valid).toBe(false);
-        });
-
-        it('should be valid when user enters a value', () => {
-          component.loginForm.patchValue({username: 'a cool username!'});
-          component.loginForm.get('username').markAsDirty();
-          fixture.detectChanges();
-
-          const usernameInputElement = getUsername();
-
-          expect(usernameInputElement.classes.valid).toBe(true);
-        });
-
-        it('should not be error when user has interacted with it but is valid', () => {
-          component.loginForm.patchValue({username: 'valid'});
-          component.loginForm.get('username').markAsDirty();
-          fixture.detectChanges();
-
-          const usernameInputElement = getUsername();
-
-          expect(usernameInputElement.classes.error).toBe(false);
-        });
-
-        it('should be error when user enters an invalid value', () => {
-          component.loginForm.patchValue({username: ''});
-          component.loginForm.get('username').markAsDirty();
-          fixture.detectChanges();
-
-          const usernameInputElement = getUsername();
-
-          expect(usernameInputElement.classes.error).toBe(true);
-        });
-
-        it('should not be error when user doesn\'t interact with it', () => {
-          component.loginForm.patchValue({username: null});
-          component.loginForm.get('username').markAsPristine();
-          fixture.detectChanges();
-
-          const usernameInputElement = getUsername();
-
-          expect(usernameInputElement.classes.error).toBe(false);
-        });
-      });
-
-      describe('password', () => {
-        it('should not be valid when user has not interacted with it', () => {
-          component.loginForm.patchValue({password: null});
-          component.loginForm.get('password').markAsPristine();
-          fixture.detectChanges();
-
-          const passwordInputElement = fixture.debugElement.query(By.css('input[name=password]'));
-
-          expect(passwordInputElement.classes.valid).toBe(false);
-        });
-
-        it('should be valid when user enters a value', () => {
-          component.loginForm.patchValue({password: 'a cool password!'});
-          component.loginForm.get('password').markAsDirty();
-          fixture.detectChanges();
-
-          const passwordInputElement = fixture.debugElement.query(By.css('input[name=password]'));
-
-          expect(passwordInputElement.classes.valid).toBe(true);
-        });
-
-        it('should not be error when user has interacted with it but is valid', () => {
-          component.loginForm.patchValue({password: 'valid'});
-          component.loginForm.get('password').markAsDirty();
-          fixture.detectChanges();
-
-          const passwordInputElement = fixture.debugElement.query(By.css('input[name=password]'));
-
-          expect(passwordInputElement.classes.error).toBe(false);
-        });
-
-        it('should be error when user enters an invalid value', () => {
-          component.loginForm.patchValue({password: ''});
-          component.loginForm.get('password').markAsDirty();
-          fixture.detectChanges();
-
-          const passwordInputElement = fixture.debugElement.query(By.css('input[name=password]'));
-
-          expect(passwordInputElement.classes.error).toBe(true);
-        });
-
-        it('should not be error when user doesn\'t interact with it', () => {
-          component.loginForm.patchValue({password: null});
-          component.loginForm.get('password').markAsPristine();
-          fixture.detectChanges();
-
-          const passwordInputElement = fixture.debugElement.query(By.css('input[name=password]'));
-
-          expect(passwordInputElement.classes.error).toBe(false);
         });
       });
     });

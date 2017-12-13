@@ -4,6 +4,7 @@ import {LoginComponent} from './login.component';
 import {LoginRoutingModule} from './login.routing';
 import {FlashMessageModule} from '../../shared/flash-message/flash-message.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MatButtonModule, MatInputModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -11,6 +12,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     FlashMessageModule,
+    MatInputModule,
+    MatButtonModule,
     LoginRoutingModule
   ],
   declarations: [LoginComponent]
