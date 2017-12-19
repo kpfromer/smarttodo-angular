@@ -9,8 +9,17 @@ import {JwtModule} from '@auth0/angular-jwt';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {DefaultInterceptor} from './shared/default.interceptor';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatIconModule, MatMenuModule, MatSidenavModule, MatSnackBarModule, MatToolbarModule} from '@angular/material';
+import {
+  ErrorStateMatcher,
+  MatButtonModule,
+  MatIconModule,
+  MatMenuModule,
+  MatSidenavModule,
+  MatSnackBarModule,
+  MatToolbarModule
+} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {DefaultErrorMatcher} from './shared/default.error-matcher';
 
 export function tokenGetter() {
   return localStorage.getItem('id_token');
@@ -41,7 +50,8 @@ export function tokenGetter() {
   ],
   providers: [
     AuthService,
-    {provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true},
+    {provide: ErrorStateMatcher, useClass: DefaultErrorMatcher}
   ],
   bootstrap: [AppComponent]
 })
