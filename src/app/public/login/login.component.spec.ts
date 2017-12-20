@@ -192,8 +192,8 @@ describe('LoginComponent', () => {
 
       describe('username', () => {
 
-        const getUsername = () => fixture.debugElement.query(By.css('#usernameContainer'));
-        const getUsernameError = () => getUsername().query(By.css('mat-error'));
+        const getUsernameContainer = () => fixture.debugElement.query(By.css('#usernameContainer'));
+        const getUsernameError = () => getUsernameContainer().query(By.css('mat-error'));
 
         let usernameInput;
         beforeEach(() => {
@@ -226,8 +226,8 @@ describe('LoginComponent', () => {
 
       describe('password', () => {
 
-        const getPassword = () => fixture.debugElement.query(By.css('#passwordContainer'));
-        const getPasswordError = () => getPassword().query(By.css('mat-error'));
+        const getPasswordContainer = () => fixture.debugElement.query(By.css('#passwordContainer'));
+        const getPasswordError = () => getPasswordContainer().query(By.css('mat-error'));
 
         let passwordInput;
         beforeEach(() => {
