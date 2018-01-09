@@ -44,6 +44,8 @@ export class LoginComponent implements OnInit {
         this.loginForm.get('password').setErrors({required: true});
         this.notValidUser = true;
       }
+    }, () => {
+      this.openSnackBar('Failed to connect to server', 'DISMISS');
     });
   }
 
