@@ -164,6 +164,17 @@ describe('LoginComponent', () => {
 
       expect(loggedIn).toBe(false);
     }));
+
+    it('should display a snackbar message on error', fakeAsync(() => {
+      component.loginForm.setValue({username: 'username', password: 'password'});
+      spyOn(loginService, 'login').and.returnValue(Observable.throw(new Error('An error!')));
+      spyOn(component, 'openSnackBar');
+
+      component.login();
+      tick();
+
+      expect(component.openSnackBar).toHaveBeenCalled();
+    }));
   });
 
   describe('view', () => {
