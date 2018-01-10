@@ -28,7 +28,16 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
+    customLaunchers: {
+      ChromeTravis: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
+    },
     singleRun: false,
     browserNoActivityTimeout: 30000
   });
+  if (process.env.TRAVIS) {
+    config.browsers = ['ChromeTravis'];
+  }
 };
