@@ -3,15 +3,15 @@
 
 const { SpecReporter } = require('jasmine-spec-reporter');
 
-const config = {
+exports.config = {
   allScriptsTimeout: 11000,
   specs: [
     './e2e/**/*.e2e-spec.ts'
   ],
   capabilities: {
-    'browserName': 'chrome',
+    browserName: 'chrome',
     chromeOptions: {
-      args: ["--headless", "--disable-gpu", "--window-size=800,600"]
+      args: ['--headless', '--disable-gpu', '--window-size=800x600']
     }
   },
   directConnect: true,
@@ -29,5 +29,3 @@ const config = {
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
   }
 };
-
-exports.config = config;
