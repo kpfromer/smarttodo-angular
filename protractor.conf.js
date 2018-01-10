@@ -9,7 +9,10 @@ const config = {
     './e2e/**/*.e2e-spec.ts'
   ],
   capabilities: {
-    'browserName': 'chrome'
+    'browserName': 'chrome',
+    chromeOptions: {
+      args: ["--headless", "--disable-gpu", "--window-size=800,600"]
+    }
   },
   directConnect: true,
   baseUrl: 'http://localhost:4200/',
@@ -26,11 +29,5 @@ const config = {
     jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
   }
 };
-
-if (process.env.TRAVIS) {
-  config.capabilities.chromeOptions = {
-    args: ["--headless", "--disable-gpu", "--window-size=800x600"]
-  }
-}
 
 exports.config = config;
