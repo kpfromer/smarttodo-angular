@@ -9,6 +9,7 @@ import {NewTaskComponent} from './new-task/new-task.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {InlineEditorModule} from '../../shared/inline-editor/inline-editor.module';
 import {FlashMessageModule} from '../../shared/flash-message/flash-message.module';
+import {MatCheckboxModule} from '@angular/material';
 
 @NgModule({
   imports: [
@@ -17,7 +18,8 @@ import {FlashMessageModule} from '../../shared/flash-message/flash-message.modul
     ReactiveFormsModule,
     InlineEditorModule,
     TodoRoutingModule,
-    FlashMessageModule
+    FlashMessageModule,
+    MatCheckboxModule
   ],
   declarations: [
     TaskComponent,
