@@ -1,6 +1,5 @@
-<li class="collection-item">
-  <input type="checkbox" [id]="'task'+task.id" [checked]="task.complete" (change)="click(!task.complete)">
-  <app-inline-editor [forId]="'task'+task.id" type="text" [required]="true" (onSave)="updateDescription($event.input)"
-                     [ngModel]="task.description"
-                     [ngStyle]="{'text-decoration': task.complete ? 'line-through' : null}"></app-inline-editor>
-</li>
+<mat-checkbox [id]="'task'+task.id" [checked]="task.complete" (change)="click(!task.complete)"></mat-checkbox>
+<app-inline-editor class="body-1" [forId]="'task'+task.id" type="text" [required]="true"
+                   (onSave)="updateDescription($event.input)"
+                   [ngModel]="task.description"
+                   [ngStyle]="{'text-decoration': task.complete ? 'line-through' : null}"></app-inline-editor>

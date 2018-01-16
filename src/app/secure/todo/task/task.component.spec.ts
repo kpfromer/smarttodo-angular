@@ -7,6 +7,7 @@ import {TaskService} from '../shared/task.service';
 import {Observable} from 'rxjs/Observable';
 import {Component, CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {HttpErrorResponse} from '@angular/common/http';
+import {MatCheckbox, MatCheckboxChange, MatCheckboxModule} from '@angular/material';
 
 class MockTaskService {
   patchTaskById(id: string, properties): Observable<Task> {
@@ -34,6 +35,7 @@ describe('TaskComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [MatCheckboxModule],
       providers: [{provide: TaskService, useClass: MockTaskService}],
       declarations: [TaskComponent, MockInlineEditorDirective],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -58,19 +60,28 @@ describe('TaskComponent', () => {
 
   describe('checkbox', () => {
 
+    const getCheckboxElement = () => fixture.debugElement.query(By.css('mat-checkbox'));
+    const getCheckbox = () => getCheckboxElement().injector.get(MatCheckbox);
+    const checkboxClick = () => {
+      const checkbox = getCheckbox();
+      checkbox.change.emit({
+        source: checkbox,
+        checked: !checkbox.checked
+      } as MatCheckboxChange);
+    };
+
     it('should have an id', () => {
-      const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
+      const checkboxElement = getCheckboxElement();
       expect(checkboxElement.nativeElement.getAttribute('id')).toBe(`task${component.task.id}`);
     });
 
     it('should be checked', () => {
-      const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
-      expect(checkboxElement.nativeElement.checked).toBe(true);
+      const checkboxElement = getCheckbox();
+      expect(checkboxElement.checked).toBe(true);
     });
 
     it('should change complete if clicked', () => {
-      const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
-      checkboxElement.nativeElement.click();
+      checkboxClick();
       fixture.detectChanges();
 
       expect(component.task.complete).toBe(false);
@@ -80,8 +91,7 @@ describe('TaskComponent', () => {
       const taskService = TestBed.get(TaskService);
       spyOn(taskService, 'patchTaskById').and.returnValue(Observable.of({}));
 
-      const checkboxElement = fixture.debugElement.query(By.css('input[type="checkbox"]'));
-      checkboxElement.nativeElement.click();
+      checkboxClick();
       tick();
 
       expect(taskService.patchTaskById).toHaveBeenCalledWith('1', {complete: false});
