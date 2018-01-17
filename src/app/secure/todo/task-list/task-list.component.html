@@ -1,8 +1,22 @@
+<mat-toolbar>
+  Todo-List
+</mat-toolbar>
+
 <app-flash-message *ngIf="error">
   Something went wrong connecting the server!
   <br>
   You might want to try again.
 </app-flash-message>
 
-<app-task *ngFor="let task of tasks" [task]="task" (onError)="error = true"></app-task>
-<app-new-task (onCreate)="createTask($event)"></app-new-task>
+<mat-list fxLayout="column">
+  <ng-container *ngFor="let task of tasks">
+    <mat-list-item>
+      <app-task [task]="task" (onError)="error = true"></app-task>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
+  <mat-list-item class="new-task-item">
+    <app-new-task (onCreate)="createTask($event)" fxFill></app-new-task>
+  </mat-list-item>
+
+</mat-list>

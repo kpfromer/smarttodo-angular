@@ -9,7 +9,7 @@ import {NewTaskComponent} from './new-task/new-task.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {InlineEditorModule} from '../../shared/inline-editor/inline-editor.module';
 import {FlashMessageModule} from '../../shared/flash-message/flash-message.module';
-import {MatCheckboxModule, MatInputModule} from '@angular/material';
+import {MatCheckboxModule, MatInputModule, MatListModule, MatToolbarModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
@@ -22,7 +22,9 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     FlashMessageModule,
     FlexLayoutModule,
     MatCheckboxModule,
-    MatInputModule
+    MatInputModule,
+    MatListModule,
+    MatToolbarModule
   ],
   declarations: [
     TaskComponent,
