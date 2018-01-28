@@ -19,8 +19,8 @@ class TestHostComponent {
 }
 
 describe('UpdateTaskComponent', () => {
-  let component: UpdateTaskComponent;
-  let fixture: ComponentFixture<UpdateTaskComponent>;
+  let component: TestHostComponent;
+  let fixture: ComponentFixture<TestHostComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
