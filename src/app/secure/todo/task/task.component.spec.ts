@@ -2,12 +2,14 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 
 import {TaskComponent} from './task.component';
 import {Task} from '../shared/task';
-import {By} from '@angular/platform-browser';
 import {TaskService} from '../shared/task.service';
 import {Observable} from 'rxjs/Observable';
-import {Component, CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Output, ViewChild} from '@angular/core';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatCheckbox, MatCheckboxChange, MatCheckboxModule} from '@angular/material';
+import {SatPopoverModule} from '@ncstate/sat-popover';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {By} from '@angular/platform-browser';
 
 class MockTaskService {
   patchTaskById(id: string, properties): Observable<Task> {
@@ -16,17 +18,11 @@ class MockTaskService {
 }
 
 @Directive({
-  selector: 'app-inline-editor'
+  selector: 'app-update-task'
 })
-class MockInlineEditorDirective {
-
-  @Output() onSave = new EventEmitter<{ input: any }>();
-  @Input() required: boolean;
-  @Input() disabled = false;
-  @Input() forId: string;
-  @Input() type: string;
-
-  @Input() ngModel;
+class MockUpdateTaskDirective {
+  @Output() onSave = new EventEmitter<string>();
+  @Output() onCancel = new EventEmitter<boolean>();
 }
 
 describe('TaskComponent', () => {
@@ -35,9 +31,16 @@ describe('TaskComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MatCheckboxModule],
+      imports: [
+        MatCheckboxModule,
+        SatPopoverModule,
+        BrowserAnimationsModule
+      ],
       providers: [{provide: TaskService, useClass: MockTaskService}],
-      declarations: [TaskComponent, MockInlineEditorDirective],
+      declarations: [
+        TaskComponent,
+        MockUpdateTaskDirective
+      ],
       schemas: [CUSTOM_ELEMENTS_SCHEMA]
     })
       .compileComponents();
@@ -98,54 +101,61 @@ describe('TaskComponent', () => {
     }));
   });
 
-  describe('description inline editor', () => {
-    it('should be for the checkbox', () => {
-      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
-        .injector.get(MockInlineEditorDirective); // todo Put in beforeEach
+  describe('popover', () => {
+    const getPopover = () => fixture.nativeElement.querySelector('#description-update');
 
-      expect(inlineEditor.forId).toBe(`task${component.task.id}`);
+    it('should be hidden by default', () => {
+      expect(fixture.nativeElement.querySelector('#description-update')).toBeNull();
     });
 
-    it('should input text', () => {
-      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
-        .injector.get(MockInlineEditorDirective);
+    it('should start editing on label click', () => {
+      let popoverElement = fixture.nativeElement.querySelector('#description-label');
 
-      expect(inlineEditor.type).toBe('text');
+      popoverElement.click();
+
+      popoverElement = fixture.nativeElement.querySelector('#description-label');
+      expect(popoverElement).toBeTruthy();
     });
 
-    it('should be required', () => {
-      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
-        .injector.get(MockInlineEditorDirective);
+    describe('start in editing mode', () => {
 
-      expect(inlineEditor.required).toBe(true);
-    });
+      beforeEach(() => {
+        component.startEditing();
+        fixture.detectChanges();
+      });
 
-    it('should not be disabled', () => {
-      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
-        .injector.get(MockInlineEditorDirective);
+      it('should hide on cancel', () => {
+        const updateTask = fixture.debugElement.query(By.directive(MockUpdateTaskDirective))
+          .injector.get(MockUpdateTaskDirective) as MockUpdateTaskDirective;
 
-      expect(inlineEditor.disabled).toBe(false);
-    });
+        updateTask.onCancel.emit(true);
+        fixture.detectChanges();
 
-    it('should display task description', () => {
-      const inlineEditor = fixture.debugElement.query(By.directive(MockInlineEditorDirective))
-        .injector.get(MockInlineEditorDirective);
+        expect(getPopover()).toBeNull();
+      });
 
-      expect(inlineEditor.ngModel).toBe('Hello!');
-    });
+      it('should hide on save', () => {
+        const updateTask = fixture.debugElement.query(By.directive(MockUpdateTaskDirective))
+          .injector.get(MockUpdateTaskDirective) as MockUpdateTaskDirective;
 
-    it('should have text-decoration style of line-through', () => {
-      const inlineEditorElement = fixture.debugElement.query(By.directive(MockInlineEditorDirective));
+        updateTask.onSave.emit('this does not matter!');
+        fixture.detectChanges();
 
-      expect(inlineEditorElement.nativeElement.style.textDecorationLine).toBe('line-through');
-    });
+        expect(getPopover()).toBeNull();
+      });
 
-    it('should remove text-decoration style of line-through', () => {
-      component.task.complete = false;
-      fixture.detectChanges();
+      it('should update description on save', () => {
+        const newDescription = 'new desc';
 
-      const inlineEditorElement = fixture.debugElement.query(By.directive(MockInlineEditorDirective));
-      expect(inlineEditorElement.nativeElement.style.textDecorationLine).toBeFalsy();
+        spyOn(component, 'updateDescription');
+        const updateTask = fixture.debugElement.query(By.directive(MockUpdateTaskDirective))
+          .injector.get(MockUpdateTaskDirective) as MockUpdateTaskDirective;
+
+        updateTask.onSave.emit(newDescription);
+        fixture.detectChanges();
+
+        expect(component.updateDescription).toHaveBeenCalledWith(newDescription);
+      });
     });
   });
 });
@@ -171,9 +181,14 @@ describe('TaskComponent: HostComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        MatCheckboxModule,
+        SatPopoverModule,
+        BrowserAnimationsModule
+      ],
       providers: [{provide: TaskService, useClass: MockTaskService}],
       declarations: [
-        MockInlineEditorDirective,
+        MockUpdateTaskDirective,
         TaskComponent,
         HostComponent
       ],

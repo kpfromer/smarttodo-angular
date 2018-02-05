@@ -9,8 +9,10 @@ import {NewTaskComponent} from './new-task/new-task.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {InlineEditorModule} from '../../shared/inline-editor/inline-editor.module';
 import {FlashMessageModule} from '../../shared/flash-message/flash-message.module';
-import {MatCheckboxModule, MatInputModule, MatListModule, MatToolbarModule} from '@angular/material';
+import {MatButtonModule, MatCheckboxModule, MatInputModule, MatListModule, MatToolbarModule} from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {SatPopoverModule} from '@ncstate/sat-popover';
+import {UpdateTaskComponent} from './update-task/update-task.component';
 
 @NgModule({
   imports: [
@@ -24,13 +26,16 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatCheckboxModule,
     MatInputModule,
     MatListModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatButtonModule,
+    SatPopoverModule
   ],
   declarations: [
     TaskComponent,
     TaskListComponent,
     TodoComponent,
-    NewTaskComponent
+    NewTaskComponent,
+    UpdateTaskComponent
   ],
   providers: [
     TaskService
