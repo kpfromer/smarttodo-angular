@@ -1,5 +1,7 @@
 <mat-checkbox [id]="'task'+task.id" [checked]="task.complete" (change)="click(!task.complete)"></mat-checkbox>
-<app-inline-editor class="body-1" [forId]="'task'+task.id" type="text" [required]="true"
-                   (onSave)="updateDescription($event.input)"
-                   [ngModel]="task.description"
-                   [ngStyle]="{'text-decoration': task.complete ? 'line-through' : null}"></app-inline-editor>
+<label title="Click to Edit" tabindex="0" id="description-label"
+       [for]="'task'+task.id" [satPopoverAnchorFor]="popup" (click)="startEditing()">{{task.description}}</label>
+<sat-popover id="description-popover" #popup hasBackdrop horizontalAlign="after" verticalAlign="center">
+  <app-update-task id="description-update" (onSave)="doneEditing() && updateDescription($event)"
+                   (onCancel)="doneEditing()" class="mat-app-background"></app-update-task>
+</sat-popover>
