@@ -1,29 +1,40 @@
-<app-flash-message *ngIf="notValidUser">
-  Wrong username or password.
-</app-flash-message>
 <form id="login" class="login-form" [formGroup]="loginForm"
       (submit)="loginForm.valid && login()" #lgForm="ngForm"
-      novalidate>
+      novalidate #form fxFill fxLayout fxLayoutAlign.gt-xs="center start">
 
-  <mat-form-field id="usernameContainer">
-    <input matInput type="text" placeholder="Username" formControlName="username"
-           required>
-    <mat-error #usernameRequired *ngIf="loginForm.get('username').hasError('required')">
-      Username is required
-    </mat-error>
-  </mat-form-field>
+  <mat-card fxFlex fxFlex.gt-xs="500px" ngStyle.gt-xs="margin-top: 75px">
 
-  <br>
+    <mat-toolbar mat-card-image>Login</mat-toolbar>
 
-  <mat-form-field id="passwordContainer">
-    <input matInput type="password" placeholder="Password" formControlName="password"
-           required>
-    <mat-error *ngIf="loginForm.get('password').hasError('required')">
-      Password is required
-    </mat-error>
-  </mat-form-field>
+    <mat-card-content fxLayout="column">
+      <app-flash-message *ngIf="notValidUser" style="margin-bottom: 10px">
+        Wrong username or password.
+      </app-flash-message>
 
-  <br>
+      <mat-form-field id="usernameContainer" fxFill>
+        <input matInput type="text" placeholder="Username" formControlName="username"
+               required>
+        <mat-error #usernameRequired *ngIf="loginForm.get('username').hasError('required')">
+          Username is required
+        </mat-error>
+      </mat-form-field>
 
-  <button mat-raised-button type="submit">Login</button>
+      <br>
+
+      <mat-form-field id="passwordContainer" fxFill>
+        <input matInput type="password" placeholder="Password" formControlName="password"
+               required>
+        <mat-error *ngIf="loginForm.get('password').hasError('required')">
+          Password is required
+        </mat-error>
+      </mat-form-field>
+
+    </mat-card-content>
+
+    <mat-card-actions fxLayout="column">
+      <button mat-button type="submit" fxFlexAlign="end">LOGIN</button>
+    </mat-card-actions>
+
+  </mat-card>
+
 </form>

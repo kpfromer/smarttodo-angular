@@ -4,7 +4,8 @@ import {LoginComponent} from './login.component';
 import {LoginRoutingModule} from './login.routing';
 import {FlashMessageModule} from '../../shared/flash-message/flash-message.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatButtonModule, MatInputModule, MatSnackBarModule} from '@angular/material';
+import {MatButtonModule, MatCardModule, MatInputModule, MatSnackBarModule, MatToolbarModule} from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   imports: [
@@ -15,6 +16,9 @@ import {MatButtonModule, MatInputModule, MatSnackBarModule} from '@angular/mater
     MatSnackBarModule,
     MatInputModule,
     MatButtonModule,
+    MatToolbarModule,
+    MatCardModule,
+    FlexLayoutModule,
     LoginRoutingModule
   ],
   declarations: [LoginComponent]
