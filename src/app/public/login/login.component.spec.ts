@@ -7,7 +7,15 @@ import {By} from '@angular/platform-browser';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-import {MatButtonModule, MatInputModule, MatSnackBar, MatSnackBarRef, SimpleSnackBar} from '@angular/material';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatInputModule,
+  MatSnackBar,
+  MatSnackBarRef,
+  MatToolbarModule,
+  SimpleSnackBar
+} from '@angular/material';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import createSpy = jasmine.createSpy;
 
@@ -43,7 +51,9 @@ describe('LoginComponent', () => {
         ReactiveFormsModule,
         BrowserAnimationsModule,
         MatInputModule,
-        MatButtonModule
+        MatButtonModule,
+        MatCardModule,
+        MatToolbarModule
       ],
       providers: [
         FormBuilder,
