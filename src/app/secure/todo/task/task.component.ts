@@ -1,12 +1,13 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Task} from '../shared/task';
 import {TaskService} from '../shared/task.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {SatPopover} from '@ncstate/sat-popover';
 
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
-  styleUrls: ['./task.component.css']
+  styleUrls: ['./task.component.scss']
 })
 export class TaskComponent implements OnInit {
 
@@ -14,6 +15,8 @@ export class TaskComponent implements OnInit {
   task: Task;
 
   @Output() onError = new EventEmitter<Error | HttpErrorResponse>();
+
+  @ViewChild('popup') popup: SatPopover;
 
   constructor(private service: TaskService) {
   }
@@ -33,6 +36,18 @@ export class TaskComponent implements OnInit {
       },
       err => this.onError.emit(err)
     );
+  }
+
+  startEditing() {
+    console.log('Start Editing');
+    this.popup.open();
+    return true;
+  }
+
+  doneEditing() {
+    console.log('Stop Editing');
+    this.popup.close();
+    return true;
   }
 
   ngOnInit() {

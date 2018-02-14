@@ -1,0 +1,13 @@
+<form [formGroup]="editDescriptionForm"
+      (submit)="editDescriptionForm.valid && submit()">
+  <h3>Edit Task</h3>
+  <mat-form-field>
+    <input id="description-input" matInput type="text" name="description" autocomplete="off" placeholder="Description"
+           formControlName="description">
+  </mat-form-field>
+
+  <div class="actions">
+    <button id="cancel-button" mat-button type="button" color="primary" (click)="cancel()">CANCEL</button>
+    <button id="submit-button" mat-button type="submit" color="primary">SAVE</button>
+  </div>
+</form>

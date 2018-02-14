@@ -24,12 +24,19 @@ describe('AuthGuard', () => {
     expect(service).toBeTruthy();
   }));
 
-  describe('canActivate', () => {
+  describe('checkLogin', () => {
     it('should return true if the user is authenticated', inject([AuthGuard, AuthService],
       (service: AuthGuard, authService: AuthService) => {
         spyOn(authService, 'loggedIn').and.returnValue(true);
 
-        expect(service.canActivate()).toBe(true);
+        expect(service.checkLogin()).toBe(true);
+      }));
+
+    it('should return false if user is not authenticated', inject([AuthGuard, AuthService],
+      (service: AuthGuard, authService: AuthService) => {
+        spyOn(authService, 'loggedIn').and.returnValue(false);
+
+        expect(service.checkLogin()).toBe(false);
       }));
 
     it('should redirect to the login page if user is not authenticated', inject([AuthGuard, AuthService, Router],
@@ -37,17 +44,36 @@ describe('AuthGuard', () => {
         spyOn(authService, 'loggedIn').and.returnValue(false);
         spyOn(router, 'navigateByUrl');
 
-        expect(service.canActivate()).toBe(false);
+        service.checkLogin();
+
         expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
       }));
   });
 
-  describe('canActivateChild', () => {
-    it('should call canActivate', inject([AuthGuard],
+  describe('canActivate', () => {
+    it('should call checkLogin', inject([AuthGuard],
       (service: AuthGuard) => {
-        spyOn(service, 'canActivate');
+        spyOn(service, 'checkLogin');
+        service.canActivate();
+        expect(service.checkLogin).toHaveBeenCalled();
+      }));
+  });
+
+  describe('canActivateChild', () => {
+    it('should call checkLogin', inject([AuthGuard],
+      (service: AuthGuard) => {
+        spyOn(service, 'checkLogin');
         service.canActivateChild();
-        expect(service.canActivate).toHaveBeenCalled();
+        expect(service.checkLogin).toHaveBeenCalled();
+      }));
+  });
+
+  describe('canLoad', () => {
+    it('should call checkLogin', inject([AuthGuard],
+      (service: AuthGuard) => {
+        spyOn(service, 'checkLogin');
+        service.canLoad();
+        expect(service.checkLogin).toHaveBeenCalled();
       }));
   });
 });

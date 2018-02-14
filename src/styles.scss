@@ -1,0 +1,63 @@
+// External Assets (Fonts, Icons)
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+// Angular Themes
+@import '~@angular/material/_theming';
+@import "assets/styles/theme";
+// Custom Material Components
+@import 'app/shared/flash-message/flash-message.component';
+
+@mixin universal-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+  $warn: map-get($theme, warn);
+
+  .primary {
+    color: mat-color($primary);
+  }
+
+  .accent {
+    color: mat-color($accent);
+  }
+
+  .warn {
+    color: mat-color($warn);
+  }
+}
+
+@include angular-material-theme($todo-app-theme);
+@include flash-message-theme($todo-app-theme);
+@include universal-theme($todo-app-theme);
+
+.dark-theme {
+  @include angular-material-theme($dark-theme);
+  @include flash-message-theme($dark-theme);
+  @include universal-theme($dark-theme);
+}
+
+
+body {
+  margin: 0;
+}
+
+.app-frame {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.mat-drawer-backdrop.mat-drawer-shown {
+  background-color: rgba(73, 73, 73, 0.5);
+}
+
+.app-toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+a {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}

@@ -108,10 +108,20 @@ describe('AuthService', () => {
   });
 
   describe('logout', () => {
-    it('should logout', () => {
+    beforeAll(() => {
       spyOn(localStorage, 'removeItem');
+    });
+
+    it('should remove id_token', () => {
       authService.logout();
+
       expect(localStorage.removeItem).toHaveBeenCalledWith('id_token');
+    });
+
+    it('should return true', () => {
+      const loggedOut = authService.logout();
+
+      expect(loggedOut).toBe(true);
     });
   });
 

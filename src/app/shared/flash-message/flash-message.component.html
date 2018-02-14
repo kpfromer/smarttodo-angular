@@ -1,8 +1,4 @@
-<div id="card-alert" class="card" [ngClass]="status">
-  <div class="card-content white-text">
-    <p><ng-content></ng-content></p>
-  </div>
-  <button type="button" class="close white-text" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">×</span>
-  </button>
+<div class="vertical-align">
+  <mat-icon *ngIf="icon != null" [color]="color">{{icon}}</mat-icon>
+  <span [ngClass]="color" [class.flash-message-text]="icon != null"><ng-content></ng-content></span>
 </div>

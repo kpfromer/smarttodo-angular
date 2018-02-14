@@ -1,11 +1,7 @@
-<li class="collection-item">
-  <form method="post" class="col s12" [formGroup]="newTaskForm"
-        (submit)="newTaskForm.valid && createTask(newTaskForm.get('description').value)">
-    <div class="row">
-      <div class="input-field col s9">
-        <input id="descriptionInput" type="text" name="description" autocomplete="off" formControlName="description">
-        <label for="descriptionInput" class="">Task Title</label>
-      </div>
-    </div>
-  </form>
-</li>
+<form method="post" [formGroup]="newTaskForm"
+      (submit)="newTaskForm.valid && createTask(newTaskForm.get('description').value)">
+  <mat-form-field fxFill>
+    <input matInput type="text" name="description" autocomplete="off" placeholder="Description"
+           formControlName="description">
+  </mat-form-field>
+</form>

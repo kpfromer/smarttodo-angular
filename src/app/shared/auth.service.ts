@@ -43,6 +43,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('id_token');
+    return true;
   }
 
   loggedIn() {

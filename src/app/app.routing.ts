@@ -7,7 +7,7 @@ import {AuthGuard} from './shared/auth-guard.service';
   imports: [
     RouterModule.forRoot([
       {path: '', loadChildren: './public/public.module#PublicModule'},
-      {path: '', loadChildren: './secure/secure.module#SecureModule'},
+      {path: '', loadChildren: './secure/secure.module#SecureModule', canLoad: [AuthGuard]},
       {path: '**', component: PageNotFoundComponent}
     ])
   ],

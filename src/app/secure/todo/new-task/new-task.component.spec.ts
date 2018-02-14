@@ -4,6 +4,9 @@ import {NewTaskComponent} from './new-task.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {By} from '@angular/platform-browser';
 import {Component, ViewChild} from '@angular/core';
+import {FlexLayoutModule} from '@angular/flex-layout';
+import {MatInputModule} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('NewTaskComponent', () => {
   let component: NewTaskComponent;
@@ -11,7 +14,12 @@ describe('NewTaskComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
+      imports: [
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        BrowserAnimationsModule,
+        MatInputModule
+      ],
       declarations: [ NewTaskComponent ]
     })
     .compileComponents();
@@ -87,7 +95,12 @@ describe('NewTaskComponent: HostComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
+      imports: [
+        ReactiveFormsModule,
+        FlexLayoutModule,
+        BrowserAnimationsModule,
+        MatInputModule
+      ],
       declarations: [ TestHostComponent, NewTaskComponent ]
     })
       .compileComponents();
