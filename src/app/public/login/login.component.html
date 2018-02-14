@@ -1,13 +1,13 @@
 <form id="login" class="login-form" [formGroup]="loginForm"
       (submit)="loginForm.valid && login()" #lgForm="ngForm"
-      novalidate #form fxFill fxLayout fxLayoutAlign.gt-xs="center start">
-
+      novalidate fxFill fxLayout fxLayoutAlign.gt-xs="center start">
   <mat-card fxFlex fxFlex.gt-xs="500px" ngStyle.gt-xs="margin-top: 75px">
 
     <mat-toolbar mat-card-image>Login</mat-toolbar>
 
     <mat-card-content fxLayout="column">
-      <app-flash-message *ngIf="notValidUser" style="margin-bottom: 10px">
+
+      <app-flash-message *ngIf="notValidUser" id="flash-message">
         Wrong username or password.
       </app-flash-message>
 
@@ -18,8 +18,6 @@
           Username is required
         </mat-error>
       </mat-form-field>
-
-      <br>
 
       <mat-form-field id="passwordContainer" fxFill>
         <input matInput type="password" placeholder="Password" formControlName="password"
