@@ -2,6 +2,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {LogoutComponent} from './logout.component';
 import {Router} from '@angular/router';
+import {MatSnackBar} from '@angular/material';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import createSpy = jasmine.createSpy;
 
 describe('LogoutComponent', () => {
@@ -12,9 +14,17 @@ describe('LogoutComponent', () => {
     navigateByUrl: createSpy('navigateByUrl')
   };
 
+  const mockSnackBar = {
+    open: createSpy('open')
+  };
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [{provide: Router, useValue: mockRouter}],
+      imports: [BrowserAnimationsModule],
+      providers: [
+        {provide: Router, useValue: mockRouter},
+        {provide: MatSnackBar, useValue: mockSnackBar}
+      ],
       declarations: [ LogoutComponent ]
     })
     .compileComponents();
@@ -43,5 +53,22 @@ describe('LogoutComponent', () => {
 
       expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/home');
     });
+
+    it('should display a snack-bar notification', () => {
+      component.logOut();
+
+      expect(mockSnackBar.open).toHaveBeenCalledWith('Successfully Logged Out', 'DISMISS', {
+        duration: 3500
+      });
+    });
   });
 });
+
+
+// @Component({
+//   template: `<app-logout></app-logout>`
+// });
+// class MockHostComponent {
+//   let hostComponent: MockHostComponent;
+//   let fixture: ComponentFixture<MockHostComponent>;
+// }
