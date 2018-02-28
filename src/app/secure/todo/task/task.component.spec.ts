@@ -1,7 +1,7 @@
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {TaskComponent} from './task.component';
-import {Task} from '../shared/task';
+import {SavedTask} from '../shared/saved-task';
 import {TaskService} from '../shared/task.service';
 import {Observable} from 'rxjs/Observable';
 import {Component, CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Output, ViewChild} from '@angular/core';
@@ -12,7 +12,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
 
 class MockTaskService {
-  patchTaskById(id: string, properties): Observable<Task> {
+  patchTaskById(id: string, properties): Observable<SavedTask> {
     return;
   }
 }
@@ -49,8 +49,8 @@ describe('TaskComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TaskComponent);
     component = fixture.componentInstance;
-    component.task = new Task({
-      id: '1',
+    component.task = new SavedTask({
+      _id: '1',
       description: 'Hello!',
       complete: true
     });
@@ -72,11 +72,6 @@ describe('TaskComponent', () => {
         checked: !checkbox.checked
       } as MatCheckboxChange);
     };
-
-    it('should have an id', () => {
-      const checkboxElement = getCheckboxElement();
-      expect(checkboxElement.nativeElement.getAttribute('id')).toBe(`task${component.task.id}`);
-    });
 
     it('should be checked', () => {
       const checkboxElement = getCheckbox();
@@ -169,7 +164,7 @@ class HostComponent {
 
   @ViewChild('taskEle') taskElement: TaskComponent;
 
-  task: Task;
+  task: SavedTask;
 
   error: boolean;
 }
@@ -202,8 +197,8 @@ describe('TaskComponent: HostComponent', () => {
     component = fixture.componentInstance;
     taskService = TestBed.get(TaskService);
 
-    component.task = new Task({
-      id: 'coolId',
+    component.task = new SavedTask({
+      _id: 'coolId',
       description: 'math/science',
       complete: false
     });

@@ -1,14 +1,17 @@
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {TaskListComponent} from './task-list.component';
-import {Task} from '../shared/task';
+import {SavedTask} from '../shared/saved-task';
 import {CUSTOM_ELEMENTS_SCHEMA, Directive, EventEmitter, Input, Output} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {TaskService} from '../shared/task.service';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/observable/throw';
 import {HttpErrorResponse} from '@angular/common/http';
+import {TemporaryTask} from '../shared/temporary-task';
 import any = jasmine.any;
+import objectContaining = jasmine.objectContaining;
+import stringMatching = jasmine.stringMatching;
 
 
 @Directive({
@@ -16,7 +19,7 @@ import any = jasmine.any;
 })
 class MockTaskDirective {
   @Input('task')
-  public task: Task;
+  public task: SavedTask;
 
   @Output() onError = new EventEmitter<Error | HttpErrorResponse>();
 }
@@ -44,7 +47,7 @@ class MockTaskService {
     return Observable.of([]);
   }
 
-  createTask(task: { id: string, description: string, complete: boolean }) {
+  createTask(task: TemporaryTask) {
     return;
   }
 }
@@ -92,13 +95,13 @@ describe('TaskListComponent', () => {
 
   it('should create a task component for every task in tasks', () => {
     component.tasks = [
-      new Task({
-        id: '1',
+      new SavedTask({
+        _id: '1',
         description: 'math worksheet',
         complete: false
       }),
-      new Task({
-        id: '2',
+      new SavedTask({
+        _id: '2',
         description: 'science',
         complete: true
       })
@@ -114,8 +117,8 @@ describe('TaskListComponent', () => {
 
   it('should pass down task object', () => {
     component.tasks = [
-      new Task({
-        id: '1',
+      new SavedTask({
+        _id: '1',
         description: 'science',
         complete: true
       })
@@ -126,8 +129,8 @@ describe('TaskListComponent', () => {
     const mockTaskElement = fixture.debugElement.query(By.directive(MockTaskDirective));
     const mockTaskComponent = mockTaskElement.injector.get(MockTaskDirective) as MockTaskDirective; // todo fix to match test below
 
-    expect(mockTaskComponent.task).toEqual(new Task({
-      id: '1',
+    expect(mockTaskComponent.task).toEqual(new SavedTask({
+      _id: '1',
       description: 'science',
       complete: true
     }));
@@ -152,8 +155,8 @@ describe('TaskListComponent', () => {
 
   it('should render error flashmessage when error for a task', fakeAsync(() => {
     component.tasks = [
-      new Task({
-        id: '1',
+      new SavedTask({
+        _id: '1',
         description: 'math worksheet',
         complete: false
       })
@@ -190,7 +193,7 @@ describe('TaskListComponent', () => {
     it('should get tasks', fakeAsync(() => {
       spyOn(taskService, 'getTasks').and.returnValue(Observable.of([
         {
-          id: 'IDS!',
+          _id: 'IDS!',
           description: 'hello!',
           complete: false
         }
@@ -201,11 +204,11 @@ describe('TaskListComponent', () => {
 
       expect(component.tasks).toEqual([
         {
-          id: 'IDS!',
+          _id: 'IDS!',
           description: 'hello!',
           complete: false
         }
-      ] as Task[]);
+      ] as SavedTask[]);
     }));
 
     it('should render error flashmessage when 404 error', fakeAsync(() => {
@@ -234,6 +237,32 @@ describe('TaskListComponent', () => {
     }));
   });
 
+  describe('addTemporaryTask', () => {
+    let tempTask: TemporaryTask;
+
+    beforeEach(() => {
+      tempTask = new TemporaryTask({
+        tempId: 'messystringlol',
+        description: 'test',
+        complete: false
+      });
+    });
+
+    it('should add a TemporaryTask to the task list', () => {
+      component.addTemporaryTask(tempTask);
+
+      const task = component.tasks[0];
+
+      expect(component.tasks.length).toBe(1);
+      expect(task instanceof TemporaryTask).toBe(true);
+      expect(task).toEqual(objectContaining({
+        tempId: 'messystringlol',
+        description: 'test',
+        complete: false
+      }));
+    });
+  });
+
   describe('createTask', () => {
 
     let task;
@@ -245,28 +274,48 @@ describe('TaskListComponent', () => {
       };
     });
 
-    it('should generate a uuid for task', fakeAsync(() => {
-      const createTask = spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 200}));
+    it('should call addTemporaryTask', fakeAsync(() => {
+      spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 200}));
+      const addTask = spyOn(component, 'addTemporaryTask');
+
       component.createTask(task);
       tick();
 
-      const argumentObject = createTask.calls.mostRecent().args[0];
-      expect(argumentObject.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+      expect(component.addTemporaryTask).toHaveBeenCalled();
+
+      const tempTask = addTask.calls.mostRecent().args[0];
+
+      expect(tempTask instanceof TemporaryTask).toBe(true);
+      expect(tempTask).toEqual(objectContaining({
+        tempId: stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i),
+        description: 'i am an epic new task',
+        complete: false
+      }));
     }));
 
-    it('should add it to tasks', () => {
-      spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 200}));
+    it('should replace the TemporaryTask with a SavedTask on POST response', fakeAsync(() => {
+      spyOn(taskService, 'createTask').and.returnValue(Observable.of(
+        {
+          _id: 'i am an id',
+          description: 'test123',
+          complete: true
+        }
+      ));
 
       component.createTask(task);
+      tick();
 
       const tasks = component.tasks;
       const newTask = tasks[0];
 
       expect(tasks.length).toBe(1);
-      expect(newTask.id).toEqual(any(String));
-      expect(newTask.description).toBe('i am an epic new task');
-      expect(newTask.complete).toBe(false);
-    });
+
+      expect(newTask).toEqual({
+        _id: 'i am an id',
+        description: 'test123',
+        complete: true
+      } as SavedTask);
+    }));
 
     it('should post to taskService', fakeAsync(() => {
       const update = spyOn(taskService, 'createTask').and.returnValue(Observable.of({status: 200}));
@@ -274,11 +323,18 @@ describe('TaskListComponent', () => {
       component.createTask(task);
       tick();
 
-      expect(update.calls.mostRecent().args[0].toJSON()).toEqual({
-        id: any(String),
+      console.log(typeof update.calls.mostRecent().args[0]);
+      console.log(update.calls.mostRecent().args[0] instanceof TemporaryTask);
+      console.log(update.calls.mostRecent().args[0]);
+
+      const newTask = update.calls.mostRecent().args[0];
+
+      expect(newTask instanceof TemporaryTask).toBe(true);
+      expect(newTask).toEqual(objectContaining({
+        tempId: any(String),
         description: 'i am an epic new task',
         complete: false
-      });
+      }));
     }));
 
     it('should render error flashmessage when 404 error', fakeAsync(() => {
@@ -289,7 +345,6 @@ describe('TaskListComponent', () => {
 
       component.createTask(task);
       tick();
-      fixture.detectChanges();
 
       expect(component.error).toBe(true);
     }));
@@ -304,6 +359,17 @@ describe('TaskListComponent', () => {
       fixture.detectChanges();
 
       expect(component.error).toBe(true);
+    }));
+
+    it('should delete temporary task on POST error', fakeAsync(() => {
+      spyOn(taskService, 'createTask').and.returnValue(Observable.throw(new HttpErrorResponse({
+        error: new Error('a client side error!')
+      })));
+
+      component.createTask(task);
+      tick();
+
+      expect(component.tasks.length).toBe(0);
     }));
   });
 

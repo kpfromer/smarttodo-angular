@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {Task} from '../shared/task';
+import {SavedTask} from '../shared/saved-task';
 import {TaskService} from '../shared/task.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {SatPopover} from '@ncstate/sat-popover';
@@ -12,7 +12,7 @@ import {SatPopover} from '@ncstate/sat-popover';
 export class TaskComponent implements OnInit {
 
   @Input()
-  task: Task;
+  task: SavedTask;
 
   @Output() onError = new EventEmitter<Error | HttpErrorResponse>();
 
@@ -23,7 +23,7 @@ export class TaskComponent implements OnInit {
 
   click(checked: boolean) {
     this.task.complete = checked;
-    this.service.patchTaskById(this.task.id, {complete: checked}).subscribe(
+    this.service.patchTaskById(this.task._id, {complete: checked}).subscribe(
       task => {
       },
       err => this.onError.emit(err)
@@ -31,7 +31,7 @@ export class TaskComponent implements OnInit {
   }
 
   updateDescription(description: string) {
-    this.service.patchTaskById(this.task.id, {description}).subscribe(
+    this.service.patchTaskById(this.task._id, {description}).subscribe(
       task => {
       },
       err => this.onError.emit(err)

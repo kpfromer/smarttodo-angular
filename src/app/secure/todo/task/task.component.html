@@ -1,6 +1,6 @@
-<mat-checkbox [id]="'task'+task.id" [checked]="task.complete" (change)="click(!task.complete)"></mat-checkbox>
+<mat-checkbox [checked]="task.complete" (change)="click(!task.complete)"></mat-checkbox>
 <label title="Click to Edit" tabindex="0" id="description-label"
-       [for]="'task'+task.id" [satPopoverAnchorFor]="popup" (click)="startEditing()">{{task.description}}</label>
+       [satPopoverAnchorFor]="popup" (click)="startEditing()">{{task.description}}</label>
 <sat-popover id="description-popover" #popup hasBackdrop horizontalAlign="after" verticalAlign="center">
   <app-update-task id="description-update" (onSave)="doneEditing() && updateDescription($event)"
                    (onCancel)="doneEditing()" class="mat-app-background"></app-update-task>

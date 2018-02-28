@@ -1,9 +1,10 @@
 import {async, TestBed} from '@angular/core/testing';
 
 import {TaskService} from './task.service';
-import {Task} from './task';
+import {SavedTask} from './saved-task';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
 import {environment} from '../../../../environments/environment';
+import {TemporaryTask} from './temporary-task';
 
 const url = environment.apiUrl;
 
@@ -43,38 +44,38 @@ describe('TaskService', () => {
       expect(req.request.method).toBe('GET');
     });
 
-    it('should return a list of Tasks', () => {
+    it('should return a list of SavedTasks', () => {
       service.getTasks().subscribe(tasks => {
         expect(tasks[0]).toEqual({
-          id: 'one',
+          _id: 'one',
           description: 'math hw',
           complete: false
-        } as Task);
+        } as SavedTask);
         expect(tasks[1]).toEqual({
-          id: 'two',
+          _id: 'two',
           description: 'science workbook',
           complete: false
-        } as Task);
+        } as SavedTask);
         expect(tasks[2]).toEqual({
-          id: 'three',
+          _id: 'three',
           description: 'pg 1-100',
           complete: true
-        } as Task);
+        } as SavedTask);
       });
 
       http.expectOne(`${url}/tasks`).flush([
           {
-            id: 'one',
+            _id: 'one',
             description: 'math hw',
             complete: false
           },
           {
-            id: 'two',
+            _id: 'two',
             description: 'science workbook',
             complete: false
           },
           {
-            id: 'three',
+            _id: 'three',
             description: 'pg 1-100',
             complete: true
           }
@@ -96,28 +97,28 @@ describe('TaskService', () => {
       expect(req.request.method).toBe('GET');
     });
 
-    it('should return a Task', () => {
+    it('should return a SavedTask', () => {
       service.getTaskById('one').subscribe(task => {
         expect(task).toEqual({
-            id: 'one',
+          _id: 'one',
             description: 'a cool task',
             complete: true
-        } as Task);
+        } as SavedTask);
       });
 
       http.expectOne(`${url}/task/one`).flush({
-          id: 'one',
+        _id: 'one',
           description: 'a cool task',
           complete: true
-      } as Task);
+      } as SavedTask);
     });
   });
 
   describe('createTask', () => {
     let task;
     beforeEach(() => {
-      task = new Task({
-        id: 'i should not be included',
+      task = new TemporaryTask({
+        tempId: 'i should not be included',
         description: 'math homework',
         complete: false
       });
@@ -129,15 +130,15 @@ describe('TaskService', () => {
       http.expectOne(`${url}/tasks`);
     });
 
-    it('should post Task', () => {
+    it('should post a TemporaryTask', () => {
       service.createTask(task).subscribe();
 
       const req = http.expectOne(`${url}/tasks`);
-      expect(req.request.body).toEqual(new Task({
-        id: 'i should not be included',
+      console.dir(req);
+      expect(req.request.body).toEqual({
         description: 'math homework',
         complete: false
-      }));
+      });
     });
 
     it('should POST', () => {
@@ -149,11 +150,11 @@ describe('TaskService', () => {
   });
 
   describe('updateTask', () => {
-    let task: Task;
+    let task: SavedTask;
 
     beforeEach(() => {
-      task = new Task({
-        id: 'i-should-be-included',
+      task = new SavedTask({
+        _id: 'i-should-be-included',
         description: 'science worksheet',
         complete: true
       });
@@ -165,12 +166,12 @@ describe('TaskService', () => {
       http.expectOne(`${url}/task/i-should-be-included`);
     });
 
-    it('should update Task', () => {
+    it('should update task', () => {
       service.updateTaskById(task).subscribe();
 
       const req = http.expectOne(`${url}/task/i-should-be-included`);
-      expect(req.request.body).toEqual(new Task({
-        id: 'i-should-be-included',
+      expect(req.request.body).toEqual(new SavedTask({
+        _id: 'i-should-be-included',
         description: 'science worksheet',
         complete: true
       }));

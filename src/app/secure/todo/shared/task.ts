@@ -1,17 +1,14 @@
-export class Task {
-  id: string;
+export abstract class Task {
   description: string;
   complete: boolean;
 
-  constructor(task: {id: string, description: string, complete: boolean}) {
-    this.id = task.id;
+  constructor(task: { description: string, complete: boolean }) {
     this.description = task.description;
     this.complete = task.complete;
   }
 
-  toJSON() {
+  asTask() {
     return {
-      id: this.id,
       description: this.description,
       complete: this.complete
     };
