@@ -31,16 +31,16 @@ describe('TaskService', () => {
   });
 
   describe('getTasks', () => {
-    it('should use /tasks', async(() => {
+    it('should use /task', async(() => {
       service.getTasks().subscribe();
 
-      http.expectOne(`${url}/tasks`);
+      http.expectOne(`${url}/task`);
     }));
 
     it('should GET', () => {
       service.getTasks().subscribe();
 
-      const req = http.expectOne(`${url}/tasks`);
+      const req = http.expectOne(`${url}/task`);
       expect(req.request.method).toBe('GET');
     });
 
@@ -63,7 +63,7 @@ describe('TaskService', () => {
         } as SavedTask);
       });
 
-      http.expectOne(`${url}/tasks`).flush([
+      http.expectOne(`${url}/task`).flush([
           {
             _id: 'one',
             description: 'math hw',
@@ -124,16 +124,16 @@ describe('TaskService', () => {
       });
     });
 
-    it('should use /tasks', () => {
+    it('should use /task', () => {
       service.createTask(task).subscribe();
 
-      http.expectOne(`${url}/tasks`);
+      http.expectOne(`${url}/task`);
     });
 
     it('should post a TemporaryTask', () => {
       service.createTask(task).subscribe();
 
-      const req = http.expectOne(`${url}/tasks`);
+      const req = http.expectOne(`${url}/task`);
       console.dir(req);
       expect(req.request.body).toEqual({
         description: 'math homework',
@@ -144,7 +144,7 @@ describe('TaskService', () => {
     it('should POST', () => {
       service.createTask(task).subscribe();
 
-      const req = http.expectOne(`${url}/tasks`);
+      const req = http.expectOne(`${url}/task`);
       expect(req.request.method).toBe('POST');
     });
   });

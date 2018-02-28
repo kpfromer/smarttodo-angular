@@ -17,7 +17,7 @@ export class TaskService {
   // todo: add edge case handling
 
   getTasks(): Observable<SavedTask[]> {
-    return this.http.get<SavedTask[]>(`${url}/tasks`);
+    return this.http.get<SavedTask[]>(`${url}/task`);
   }
 
   getTaskById(id: string): Observable<SavedTask> {
@@ -26,7 +26,7 @@ export class TaskService {
 
   createTask(task: Task): Observable<SavedTask> {
     console.log(task.asTask());
-    return this.http.post<SavedTask>(`${url}/tasks`, task.asTask());
+    return this.http.post<SavedTask>(`${url}/task`, task.asTask());
   }
 
   updateTaskById(task: SavedTask): Observable<SavedTask> {
