@@ -25,7 +25,6 @@ export class TaskService {
   }
 
   createTask(task: Task): Observable<SavedTask> {
-    console.log(task.asTask());
     return this.http.post<SavedTask>(`${url}/task`, task.asTask());
   }
 
