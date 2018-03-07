@@ -1,0 +1,12 @@
+<mat-toolbar>
+  Project-List
+</mat-toolbar>
+
+<mat-list fxLayout="column">
+  <ng-container *ngFor="let project of projects">
+    <mat-list-item>
+      <app-project [project]="project"></app-project>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
+</mat-list>
