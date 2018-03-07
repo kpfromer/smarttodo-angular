@@ -13,6 +13,7 @@ import {MatButtonModule, MatCheckboxModule, MatInputModule, MatListModule, MatTo
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {SatPopoverModule} from '@ncstate/sat-popover';
 import {UpdateTaskComponent} from './update-task/update-task.component';
+import {ProjectListComponent} from './project-list/project-list.component';
 
 @NgModule({
   imports: [
@@ -35,7 +36,8 @@ import {UpdateTaskComponent} from './update-task/update-task.component';
     TaskListComponent,
     TodoComponent,
     NewTaskComponent,
-    UpdateTaskComponent
+    UpdateTaskComponent,
+    ProjectListComponent
   ],
   providers: [
     TaskService
