@@ -13,7 +13,7 @@ export class AppComponent {
   title = 'app';
 
   constructor(private overlayContainer: OverlayContainer,
-              public authSerivce: AuthService,
+              public authService: AuthService,
               private snackBar: MatSnackBar,
               private router: Router) {
   }
@@ -25,7 +25,7 @@ export class AppComponent {
   }
 
   logout() {
-    if (this.authSerivce.logout()) {
+    if (this.authService.logout()) {
       this.router.navigateByUrl('/home');
       this.snackBar.open('Successfully Logged Out', 'DISMISS', {
         duration: 3500

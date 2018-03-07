@@ -140,7 +140,7 @@ describe('AppComponent', () => {
       let loggedIn: boolean;
 
       beforeEach(() => {
-        spyOn(component.authSerivce, 'loggedIn').and.callFake(() => loggedIn);
+        spyOn(component.authService, 'loggedIn').and.callFake(() => loggedIn);
         loggedIn = true;
 
         fixture.detectChanges();
@@ -177,7 +177,7 @@ describe('AppComponent', () => {
     let loggedIn: boolean;
 
     beforeEach(() => {
-      spyOn(component.authSerivce, 'loggedIn').and.callFake(() => loggedIn);
+      spyOn(component.authService, 'loggedIn').and.callFake(() => loggedIn);
       loggedIn = false;
 
       fixture.detectChanges();

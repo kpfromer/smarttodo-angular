@@ -8,14 +8,14 @@
 
     <span class="app-toolbar-spacer"></span>
 
-    <button mat-button id="login-button" routerLink="/login" *ngIf="!authSerivce.loggedIn()">
+    <button mat-button id="login-button" routerLink="/login" *ngIf="!authService.loggedIn()">
       Login
     </button>
 
     <mat-menu #appMenu="matMenu">
       <!-- TODO: flesh out -->
       <button mat-menu-item id="theme-toggle" (click)="isDark = !isDark">Toggle Theme</button>
-      <button mat-menu-item id="logout-button" (click)="logout()" *ngIf="authSerivce.loggedIn()">Logout</button>
+      <button mat-menu-item id="logout-button" (click)="logout()" *ngIf="authService.loggedIn()">Logout</button>
       <button mat-menu-item>Settings</button>
       <button mat-menu-item>Help</button>
     </mat-menu>
