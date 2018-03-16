@@ -39,13 +39,11 @@ export class TaskComponent implements OnInit {
   }
 
   startEditing() {
-    console.log('Start Editing');
     this.popup.open();
     return true;
   }
 
   doneEditing() {
-    console.log('Stop Editing');
     this.popup.close();
     return true;
   }
