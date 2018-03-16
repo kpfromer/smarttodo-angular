@@ -1,11 +1,8 @@
 import {Injectable} from '@angular/core';
 import 'rxjs/add/operator/map';
-import {environment} from '../../environments/environment';
-import {JwtHelperService} from '@auth0/angular-jwt';
 import {HttpClient} from '@angular/common/http';
 import {Subject} from 'rxjs/Subject';
-
-const url = environment.apiUrl;
+import {JwtService} from './auth/jwt.service';
 
 interface Token {
   authHeader: string;
@@ -14,13 +11,13 @@ interface Token {
 @Injectable()
 export class AuthService {
 
-  constructor(private http: HttpClient, private jwtHelperService: JwtHelperService) {
+  constructor(private http: HttpClient, private jwtService: JwtService) {
   }
 
   login(username: string, password: string) {
     const loggedIn = new Subject<boolean>();
 
-    this.http.post<Token>(`${url}/authenticate`, {username, password})
+    this.http.post<Token>(`/login`, {email: username, password})
       .subscribe(token => {
           if (token.authHeader) {
             localStorage.setItem('id_token', token.authHeader);
@@ -42,18 +39,20 @@ export class AuthService {
   }
 
   logout() {
+    // TODO: log out server side
     localStorage.removeItem('id_token');
     return true;
   }
 
   loggedIn() {
-    const token = this.jwtHelperService.tokenGetter();
+    // TODO: fix to rely on auth service
+    const token = this.jwtService.getToken();
 
     if (!token) {
       return false;
     }
 
-    const tokenExpired = this.jwtHelperService.isTokenExpired(token);
+    const tokenExpired = this.jwtService.isTokenExpired(token);
 
     return !tokenExpired;
   }

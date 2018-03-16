@@ -2,8 +2,8 @@ import {TestBed} from '@angular/core/testing';
 import {AuthService} from './auth.service';
 import 'rxjs/add/observable/of';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {JwtHelperService} from '@auth0/angular-jwt';
 import {environment} from '../../environments/environment';
+import {JwtService} from './auth/jwt.service';
 
 const url = environment.apiUrl;
 
@@ -11,7 +11,7 @@ class MockJwtService {
   isTokenExpired() {
   }
 
-  tokenGetter() {
+  getToken() {
   }
 }
 
@@ -24,7 +24,7 @@ describe('AuthService', () => {
       imports: [HttpClientTestingModule],
       providers: [
         AuthService,
-        {provide: JwtHelperService, useClass: MockJwtService}
+        {provide: JwtService, useClass: MockJwtService}
       ]
     });
     authService = TestBed.get(AuthService);
@@ -126,21 +126,21 @@ describe('AuthService', () => {
   });
 
   describe('loggedIn', () => {
-    let service: JwtHelperService;
+    let service: JwtService;
 
     beforeEach(() => {
-      service = TestBed.get(JwtHelperService);
+      service = TestBed.get(JwtService);
     });
 
     it('should return false when no token is found', () => {
-      spyOn(service, 'tokenGetter').and.returnValue(undefined);
+      spyOn(service, 'getToken').and.returnValue(undefined);
 
       const loggedIn = authService.loggedIn();
 
       expect(loggedIn).toBe(false);
     });
     it('should return false when the token is expired', () => {
-      spyOn(service, 'tokenGetter').and.returnValue('I am expired!');
+      spyOn(service, 'getToken').and.returnValue('I am expired!');
       spyOn(service, 'isTokenExpired').and.returnValue(true);
 
       const loggedIn = authService.loggedIn();
@@ -148,7 +148,7 @@ describe('AuthService', () => {
       expect(loggedIn).toBe(false);
     });
     it('should return true when the token is valid', () => {
-      spyOn(service, 'tokenGetter').and.returnValue('I am not expired!');
+      spyOn(service, 'getToken').and.returnValue('I am not expired!');
       spyOn(service, 'isTokenExpired').and.returnValue(false);
 
       const loggedIn = authService.loggedIn();
