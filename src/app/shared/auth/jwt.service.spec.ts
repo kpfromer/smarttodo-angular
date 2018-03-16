@@ -39,8 +39,7 @@ describe('JwtService', () => {
 
   describe('getToken', () => {
     it('should return token', () => {
-      expect(typeof service.getToken()).toBe('function');
-      expect(service.getToken()()).toBe('tokenVal');
+      expect(service.getToken).toBe('tokenVal');
     });
   });
 
