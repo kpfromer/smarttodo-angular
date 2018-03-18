@@ -2,10 +2,7 @@ import {TestBed} from '@angular/core/testing';
 import {AuthService} from './auth.service';
 import 'rxjs/add/observable/of';
 import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {environment} from '../../environments/environment';
 import {JwtService} from './auth/jwt.service';
-
-const url = environment.apiUrl;
 
 class MockJwtService {
   isTokenExpired() {
@@ -53,16 +50,16 @@ describe('AuthService', () => {
       http.verify();
     });
 
-    it('should use /authenticate', () => {
+    it('should use /login', () => {
       authService.login('admin', 'secret');
 
-      http.expectOne(`${url}/authenticate`).flush(validResponse);
+      http.expectOne(`/login`).flush(validResponse);
     });
 
     it('should post', () => {
       authService.login('admin', 'secret');
 
-      const req = http.expectOne(`${url}/authenticate`);
+      const req = http.expectOne(`/login`);
       expect(req.request.method).toBe('POST');
     });
 
@@ -71,7 +68,7 @@ describe('AuthService', () => {
         expect(localStorage.setItem).toHaveBeenCalledWith('id_token', 'i am a token!');
       });
 
-      http.expectOne(`${url}/authenticate`).flush(validResponse);
+      http.expectOne(`/login`).flush(validResponse);
     });
 
     it('should return true when successful', () => {
@@ -79,7 +76,7 @@ describe('AuthService', () => {
         expect(value).toBe(true);
       });
 
-      http.expectOne(`${url}/authenticate`).flush(validResponse);
+      http.expectOne(`/login`).flush(validResponse);
     });
 
     it('should return false when username/password are not found', () => {
@@ -87,7 +84,7 @@ describe('AuthService', () => {
         expect(value).toBe(false);
       });
 
-      http.expectOne(`${url}/authenticate`).flush({
+      http.expectOne(`/login`).flush({
         statusCode: 400,
         error: 'Bad Request',
         message: 'Invalid Email or Password.'
@@ -103,7 +100,7 @@ describe('AuthService', () => {
         expect(localStorage.setItem).not.toHaveBeenCalled();
       });
 
-      http.expectOne(`${url}/authenticate`).flush({});
+      http.expectOne(`/login`).flush({});
     });
   });
 
