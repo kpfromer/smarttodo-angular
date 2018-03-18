@@ -1,13 +1,21 @@
 import {Task} from './task';
 
 export class SavedTask extends Task {
-  readonly _id: string;
+  readonly _id: string = null;
 
-  constructor(task: { _id: string, description: string, complete: boolean }) {
-    super({
-      description: task.description,
-      complete: task.complete
-    });
-    this._id = task._id;
+  constructor(instanceData: SavedTask) {
+    super();
+    this.deserialize(instanceData);
+  }
+
+  forSearch(): { id: string; term: string } {
+    return {
+      id: this._id,
+      term: this.description
+    };
+  }
+
+  getIdentifier() {
+    return this._id;
   }
 }

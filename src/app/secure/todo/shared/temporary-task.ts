@@ -1,14 +1,21 @@
 import {Task} from './task';
 
 export class TemporaryTask extends Task {
-  tempId: string;
+  tempId: string = null;
 
-  constructor(task: { tempId: string, description: string, complete: boolean }) {
-    super({
-      description: task.description,
-      complete: task.complete
-    });
+  constructor(instanceData: TemporaryTask) {
+    super();
+    this.deserialize<TemporaryTask>(instanceData);
+  }
 
-    this.tempId = task.tempId;
+  forSearch(): { id: string; term: string } {
+    return {
+      id: this.tempId,
+      term: this.description
+    };
+  }
+
+  getIdentifier() {
+    return this.tempId;
   }
 }
