@@ -99,12 +99,12 @@ describe('TaskListComponent', () => {
         _id: '1',
         description: 'math worksheet',
         complete: false
-      }),
+      } as SavedTask),
       new SavedTask({
         _id: '2',
         description: 'science',
         complete: true
-      })
+      } as SavedTask)
     ];
 
     fixture.detectChanges();
@@ -121,7 +121,7 @@ describe('TaskListComponent', () => {
         _id: '1',
         description: 'science',
         complete: true
-      })
+      } as SavedTask)
     ];
 
     fixture.detectChanges();
@@ -133,7 +133,7 @@ describe('TaskListComponent', () => {
       _id: '1',
       description: 'science',
       complete: true
-    }));
+    } as SavedTask));
   });
 
   it('should create a new task', fakeAsync(() => {
@@ -159,7 +159,7 @@ describe('TaskListComponent', () => {
         _id: '1',
         description: 'math worksheet',
         complete: false
-      })
+      } as SavedTask)
     ];
     fixture.detectChanges();
 
@@ -245,7 +245,7 @@ describe('TaskListComponent', () => {
         tempId: 'messystringlol',
         description: 'test',
         complete: false
-      });
+      } as TemporaryTask);
     });
 
     it('should add a TemporaryTask to the task list', () => {

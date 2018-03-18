@@ -53,7 +53,7 @@ describe('TaskComponent', () => {
       _id: '1',
       description: 'Hello!',
       complete: true
-    });
+    } as SavedTask);
     fixture.detectChanges();
   });
 
@@ -201,7 +201,7 @@ describe('TaskComponent: HostComponent', () => {
       _id: 'coolId',
       description: 'math/science',
       complete: false
-    });
+    } as SavedTask);
     component.error = false;
 
     fixture.detectChanges();

@@ -34,7 +34,7 @@ export class TaskListComponent implements OnInit {
       tempId: uuid(),
       description: task.description,
       complete: task.complete
-    });
+    } as TemporaryTask);
 
     this.addTemporaryTask(newTask);
 
